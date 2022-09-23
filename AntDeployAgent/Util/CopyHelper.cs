@@ -120,14 +120,62 @@ namespace AntDeployAgentWindows.Util
             //    }
             //}
         }
+        public static bool RunExternalExe(string command,  Action<string> logger,bool warp =true)
+        {
+            Process process = null;
+            try
+            {
 
+                string workingDirectory = Directory.GetDirectoryRoot(Directory.GetCurrentDirectory());
+
+                var processStartInfo = new ProcessStartInfo()
+                {
+                    FileName = (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "cmd" : "bash"),
+                    RedirectStandardOutput = true,
+                    RedirectStandardInput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    WorkingDirectory = workingDirectory
+                };
+
+               
+                process = Process.Start(processStartInfo);
+                process.BeginOutputReadLine();
+                process.BeginErrorReadLine();
+                process.OutputDataReceived += (sender, args) =>
+                {
+                    if (!string.IsNullOrWhiteSpace(args.Data))
+                    {
+                        logger?.Invoke((warp?"【Command】":"")+args.Data);
+                    }
+                };
+                process.ErrorDataReceived += (sender, data) =>
+                {
+                    if (!string.IsNullOrWhiteSpace(data.Data)) logger?.Invoke((warp?"【Command】":"")+data.Data);
+                };
+                process.StandardInput.WriteLine($"{command} & exit");
+                process.WaitForExit();
+                process.CancelOutputRead();
+                process.CancelErrorRead();
+                //var err = process.StandardError.ReadToEnd();
+                return process.ExitCode == 0;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+            finally
+            {
+                process?.Dispose();
+            }
+        }
         /// <summary>
         /// 运行bash命令
         /// </summary>
         /// <param name="commandToRun"></param>
         /// <param name="workingDirectory"></param>
         /// <param name="logger"></param>
-        public static bool RunCommand(string commandToRun, string workingDirectory = null, Action<string> logger = null)
+        public static bool RunCommand(string commandToRun, string workingDirectory = null, Action<string> logger = null,Action<string> allOut = null)
         {
             try
             {
@@ -163,12 +211,20 @@ namespace AntDeployAgentWindows.Util
               
                 if (!string.IsNullOrEmpty(output))
                 {
-                    var outputArr = output.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
-                    foreach (var outPut in outputArr)
+                    if (allOut != null)
                     {
-                        if(string.IsNullOrEmpty(outPut)) continue;
-                        logger?.Invoke(prefix + "【Command】 " + outPut);
+                        logger?.Invoke(output);
                     }
+                    else
+                    {
+                        var outputArr = output.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+                        foreach (var outPut in outputArr)
+                        {
+                            if (string.IsNullOrEmpty(outPut)) continue;
+                            logger?.Invoke(prefix + "【Command】 " + outPut);
+                        }
+                    }
+                    
                 }
 
                 try
