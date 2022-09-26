@@ -270,6 +270,10 @@ namespace AntDeployWinform.Winform
                                 treeView1.Enabled = true;
                                 progressBar1.Visible = false;
                                 parentNode?.Expand();
+                                if (parentNode != null && parentNode.Nodes.Count > 0 && parentNode.FirstNode.Nodes.Count > 0)
+                                {
+                                    parentNode.FirstNode.Expand();
+                                }
                             };
                             System.Threading.Thread.Sleep(1000);
                             this.Invoke(action);

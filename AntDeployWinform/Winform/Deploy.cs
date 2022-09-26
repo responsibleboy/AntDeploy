@@ -19,7 +19,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using ToastHelper;
 using Exception = System.Exception;
 using Process = System.Diagnostics.Process;
 using MessageBoxEx = AntDeployWinform.Models.MessageBoxEx;
@@ -71,7 +70,7 @@ namespace AntDeployWinform.Winform
         private string _dockerOther = string.Empty;
         private string iconPath = string.Empty;
 
-        ToastHelper.NotificationService notificationService = new NotificationService();
+        ToastCore.Notification.NotificationService notificationService = new ToastCore.Notification.NotificationService();
         private string _formText = "";
         private SystemMenu systemMemu;
         public Deploy(string projectPath = null, ProjectParam project = null)
@@ -145,9 +144,7 @@ namespace AntDeployWinform.Winform
 
                 try
                 {
-#if !DEBUG
-                    notificationService.Init("AntDeploy");
-#endif
+                    notificationService.Init<ToastCore.Notification.NotificationService>("AntDeploy");
                 }
                 catch (Exception)
                 {
