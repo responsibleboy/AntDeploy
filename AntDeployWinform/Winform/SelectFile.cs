@@ -33,7 +33,7 @@ namespace AntDeployWinform.Winform
             //treeView1.DrawMode = TreeViewDrawMode.OwnerDrawAll;
             treeView1.CheckBoxes = true;
             //treeView1.Enabled = false;
-
+            this.dtpStartTime.Value = DateTime.Now.Date;
         }
 
         private string _dir = "";
@@ -57,6 +57,10 @@ namespace AntDeployWinform.Winform
         //显示
         private void SelectFile_Shown(object sender, EventArgs e)
         {
+            progressBar1.Value = 0;
+            progressBar1.Visible = true;
+            treeView1.Nodes.Clear();
+
             if (this._fileList == null)
             {
                 // 只选择了 指定文件发布
@@ -111,6 +115,19 @@ namespace AntDeployWinform.Winform
                     }
                 }
             }
+
+            //按时间过滤
+            if (this.chkQueryFiles.Checked)
+            {
+                for (int i = (fileStructs.Count - 1); i >= 0; i--)
+                {
+                    if (fileStructs[i].UpdateTime < this.dtpStartTime.Value)
+                    {
+                        fileStructs.RemoveAt(i);
+                    }
+                }
+            }
+
             Util.FileHelper.ResortFileList(fileStructs, projectPath);
             if (fileStructs.Count != paths.Count())
             {
@@ -196,6 +213,19 @@ namespace AntDeployWinform.Winform
             //progressBar1.Maximum = Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories).Length + Directory.GetDirectories(dir, "**", SearchOption.AllDirectories).Length;
             List<Models.FileStruct> fileStructs = new List<Models.FileStruct>();
             Util.FileHelper.GetAllFileInfos(fileStructs, dir, ignoreList);
+
+            //按时间过滤
+            if (this.chkQueryFiles.Checked)
+            {
+                for (int i = (fileStructs.Count - 1); i >= 0; i--)
+                {
+                    if (fileStructs[i].UpdateTime < this.dtpStartTime.Value)
+                    {
+                        fileStructs.RemoveAt(i);
+                    }
+                }
+            }
+
             progressBar1.Maximum = fileStructs.Count;
 
             var gitPath = Path.Combine(dir, ".git");
@@ -412,5 +442,17 @@ namespace AntDeployWinform.Winform
             }
         }
 
+        private void chkQueryFiles_CheckedChanged(object sender, EventArgs e)
+        {
+            SelectFile_Shown(null, null);
+        }
+
+        private void dtpStartTime_ValueChanged(object sender, EventArgs e)
+        {
+            if (this.chkQueryFiles.Checked)
+            {
+                SelectFile_Shown(null, null);
+            }
+        }
     }
 }

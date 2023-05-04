@@ -44,6 +44,10 @@ namespace AntDeployWinform.Models
         /// </summary>
         public bool IISEnableRenameJsDir { get; set; }
         /// <summary>
+        /// 是否替换html页面中引用js或css文件随机数
+        /// </summary>
+        public bool IISEnableReplaceJsRandom { get; set; }
+        /// <summary>
         /// 替换html页面中引用js或css文件随机数(正则)
         /// </summary>
         public string IISReplaceJsRandom { get; set; }
