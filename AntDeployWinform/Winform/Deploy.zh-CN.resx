@@ -160,6 +160,59 @@
   <data name="tabPage_iis_log.Size" type="System.Drawing.Size, System.Drawing">
     <value>606, 292</value>
   </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="checkBox_iis_delete_jsrandom.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="checkBox_iis_delete_jsrandom.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="checkBox_iis_delete_jsrandom.Size" type="System.Drawing.Size, System.Drawing">
+    <value>258, 16</value>
+  </data>
+  <data name="checkBox_iis_delete_jsrandom.Text" xml:space="preserve">
+    <value>是否删除html页面中引用js或css文件随机数</value>
+  </data>
+  <data name="txt_iis_replace_jsrandom.Location" type="System.Drawing.Point, System.Drawing">
+    <value>298, 46</value>
+  </data>
+  <data name="txt_iis_replace_jsrandom.Size" type="System.Drawing.Size, System.Drawing">
+    <value>161, 21</value>
+  </data>
+  <data name="label70.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label70.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="label70.Size" type="System.Drawing.Size, System.Drawing">
+    <value>257, 12</value>
+  </data>
+  <data name="label70.Text" xml:space="preserve">
+    <value>替换html页面中引用js或css文件随机数(正则):</value>
+  </data>
+  <data name="checkBox_iis_rename_jsdir.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="checkBox_iis_rename_jsdir.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="checkBox_iis_rename_jsdir.Size" type="System.Drawing.Size, System.Drawing">
+    <value>162, 16</value>
+  </data>
+  <data name="checkBox_iis_rename_jsdir.Text" xml:space="preserve">
+    <value>是否将js或css文件重命名</value>
+  </data>
+  <data name="tabPage_iis_config.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="tabPage_iis_config.Size" type="System.Drawing.Size, System.Drawing">
+    <value>606, 292</value>
+  </data>
+  <data name="tabPage_iis_config.Text" xml:space="preserve">
+    <value>其他配置</value>
+  </data>
   <data name="tab_iis.Location" type="System.Drawing.Point, System.Drawing">
     <value>3, 139</value>
   </data>
@@ -181,7 +234,6 @@
   <data name="btn_docker_stop.Location" type="System.Drawing.Point, System.Drawing">
     <value>511, 107</value>
   </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="checkBox_select_deploy_docker.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -671,15 +723,11 @@
   <data name="tabcontrol.Size" type="System.Drawing.Size, System.Drawing">
     <value>628, 486</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="$this.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
     <value>Tile</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
     <value>636, 518</value>
-  </data>
-  <data name="$this.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>Inherit</value>
   </data>
   <data name="$this.MiniDownBack" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

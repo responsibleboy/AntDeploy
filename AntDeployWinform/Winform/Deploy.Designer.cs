@@ -272,6 +272,11 @@
             this.txt_msbuild_path = new System.Windows.Forms.TextBox();
             this.label15 = new System.Windows.Forms.Label();
             this.btn_shang = new AltoControls.AltoButton();
+            this.tabPage_iis_config = new System.Windows.Forms.TabPage();
+            this.checkBox_iis_rename_jsdir = new System.Windows.Forms.CheckBox();
+            this.txt_iis_replace_jsrandom = new System.Windows.Forms.TextBox();
+            this.label70 = new System.Windows.Forms.Label();
+            this.checkBox_iis_delete_jsrandom = new System.Windows.Forms.CheckBox();
             this.tabcontrol.SuspendLayout();
             this.page_web_iis.SuspendLayout();
             this.tab_iis.SuspendLayout();
@@ -308,6 +313,7 @@
             this.page_winserver.SuspendLayout();
             this.page_linux_server.SuspendLayout();
             this.pag_advance_setting.SuspendLayout();
+            this.tabPage_iis_config.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabcontrol
@@ -508,6 +514,7 @@
             resources.ApplyResources(this.tab_iis, "tab_iis");
             this.tab_iis.Controls.Add(this.tabPage_progress);
             this.tab_iis.Controls.Add(this.tabPage_iis_log);
+            this.tab_iis.Controls.Add(this.tabPage_iis_config);
             this.tab_iis.Name = "tab_iis";
             this.tab_iis.SelectedIndex = 0;
             // 
@@ -2283,6 +2290,41 @@
             this.btn_shang.Transparency = false;
             this.btn_shang.Click += new System.EventHandler(this.btn_shang_Click);
             // 
+            // tabPage_iis_config
+            // 
+            resources.ApplyResources(this.tabPage_iis_config, "tabPage_iis_config");
+            this.tabPage_iis_config.Controls.Add(this.checkBox_iis_delete_jsrandom);
+            this.tabPage_iis_config.Controls.Add(this.txt_iis_replace_jsrandom);
+            this.tabPage_iis_config.Controls.Add(this.label70);
+            this.tabPage_iis_config.Controls.Add(this.checkBox_iis_rename_jsdir);
+            this.tabPage_iis_config.Name = "tabPage_iis_config";
+            this.tabPage_iis_config.UseVisualStyleBackColor = true;
+            // 
+            // checkBox_iis_rename_jsdir
+            // 
+            resources.ApplyResources(this.checkBox_iis_rename_jsdir, "checkBox_iis_rename_jsdir");
+            this.checkBox_iis_rename_jsdir.Name = "checkBox_iis_rename_jsdir";
+            this.checkBox_iis_rename_jsdir.UseVisualStyleBackColor = true;
+            this.checkBox_iis_rename_jsdir.Click += new System.EventHandler(this.checkBox_iis_rename_jsdir_Click);
+            // 
+            // txt_iis_replace_jsrandom
+            // 
+            resources.ApplyResources(this.txt_iis_replace_jsrandom, "txt_iis_replace_jsrandom");
+            this.txt_iis_replace_jsrandom.Name = "txt_iis_replace_jsrandom";
+            this.txt_iis_replace_jsrandom.TextChanged += new System.EventHandler(this.txt_iis_replace_jsrandom_TextChanged);
+            // 
+            // label70
+            // 
+            resources.ApplyResources(this.label70, "label70");
+            this.label70.Name = "label70";
+            // 
+            // checkBox_iis_delete_jsrandom
+            // 
+            resources.ApplyResources(this.checkBox_iis_delete_jsrandom, "checkBox_iis_delete_jsrandom");
+            this.checkBox_iis_delete_jsrandom.Name = "checkBox_iis_delete_jsrandom";
+            this.checkBox_iis_delete_jsrandom.UseVisualStyleBackColor = true;
+            this.checkBox_iis_delete_jsrandom.CheckedChanged += new System.EventHandler(this.checkBox_iis_delete_jsrandom_CheckedChanged);
+            // 
             // Deploy
             // 
             resources.ApplyResources(this, "$this");
@@ -2377,6 +2419,8 @@
             this.page_linux_server.PerformLayout();
             this.pag_advance_setting.ResumeLayout(false);
             this.pag_advance_setting.PerformLayout();
+            this.tabPage_iis_config.ResumeLayout(false);
+            this.tabPage_iis_config.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -2624,5 +2668,10 @@
         private System.Windows.Forms.Label label24;
         private System.Windows.Forms.Label label68;
         private System.Windows.Forms.TextBox txt_docker_workspace;
+        private System.Windows.Forms.TabPage tabPage_iis_config;
+        private System.Windows.Forms.TextBox txt_iis_replace_jsrandom;
+        private System.Windows.Forms.Label label70;
+        private System.Windows.Forms.CheckBox checkBox_iis_rename_jsdir;
+        private System.Windows.Forms.CheckBox checkBox_iis_delete_jsrandom;
     }
 }
