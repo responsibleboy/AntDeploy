@@ -161,13 +161,31 @@
     <value>606, 292</value>
   </data>
   <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="checkBox_iis_rename_jsname_prefix.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="checkBox_iis_rename_jsname_prefix.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="checkBox_iis_rename_jsname_prefix.Location" type="System.Drawing.Point, System.Drawing">
+    <value>37, 45</value>
+  </data>
+  <data name="checkBox_iis_rename_jsname_prefix.Size" type="System.Drawing.Size, System.Drawing">
+    <value>276, 16</value>
+  </data>
+  <data name="checkBox_iis_rename_jsname_prefix.TabIndex" type="System.Int32, mscorlib">
+    <value>45</value>
+  </data>
+  <data name="checkBox_iis_rename_jsname_prefix.Text" xml:space="preserve">
+    <value>替换js或css文件名时，是否前边带上斜杠“/”</value>
+  </data>
   <data name="label70.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="label70.Font" type="System.Drawing.Font, System.Drawing">
     <value>宋体, 9pt, style=Italic</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="label70.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
@@ -192,6 +210,9 @@
   <data name="checkBox_iis_replace_jsrandom.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
+  <data name="checkBox_iis_replace_jsrandom.Location" type="System.Drawing.Point, System.Drawing">
+    <value>37, 72</value>
+  </data>
   <data name="checkBox_iis_replace_jsrandom.Size" type="System.Drawing.Size, System.Drawing">
     <value>276, 16</value>
   </data>
@@ -204,6 +225,9 @@
   <data name="checkBox_iis_delete_jsrandom.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
+  <data name="checkBox_iis_delete_jsrandom.Location" type="System.Drawing.Point, System.Drawing">
+    <value>37, 104</value>
+  </data>
   <data name="checkBox_iis_delete_jsrandom.Size" type="System.Drawing.Size, System.Drawing">
     <value>258, 16</value>
   </data>
@@ -211,7 +235,7 @@
     <value>是否删除html页面中引用js或css文件随机数</value>
   </data>
   <data name="txt_iis_replace_jsrandom.Location" type="System.Drawing.Point, System.Drawing">
-    <value>319, 46</value>
+    <value>319, 70</value>
   </data>
   <data name="txt_iis_replace_jsrandom.Size" type="System.Drawing.Size, System.Drawing">
     <value>161, 21</value>
@@ -752,6 +776,9 @@
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
     <value>636, 518</value>
+  </data>
+  <data name="$this.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Inherit</value>
   </data>
   <data name="$this.MiniDownBack" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

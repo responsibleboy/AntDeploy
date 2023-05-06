@@ -897,6 +897,7 @@ namespace AntDeployWinform.Winform
             this.txt_folder_deploy.Text = PluginConfig.DeployFolderPath;
             this.txt_http_proxy.Text = PluginConfig.DeployHttpProxy;
             this.checkBox_iis_rename_jsdir.Checked = PluginConfig.IISEnableRenameJsDir;
+            this.checkBox_iis_rename_jsname_prefix.Checked = PluginConfig.IISEnableRenameJsNamePrefix;
             this.txt_iis_replace_jsrandom.Text = PluginConfig.IISReplaceJsRandom;
             this.checkBox_iis_delete_jsrandom.Checked = PluginConfig.IISEnableDeleteJsRandom;
             this.checkBox_iis_replace_jsrandom.Checked = PluginConfig.IISEnableReplaceJsRandom;
@@ -1055,6 +1056,7 @@ namespace AntDeployWinform.Winform
                 PluginConfig.IISEnableSelectDeploy = this.checkBox_select_deploy_iis.Checked;
                 PluginConfig.IISEnableNotStopSiteDeploy = this.checkBox_iis_restart_site.Checked;
                 PluginConfig.IISEnableUseOfflineHtm = this.checkBox_iis_use_offlinehtm.Checked;
+                PluginConfig.IISEnableRenameJsNamePrefix = this.checkBox_iis_rename_jsname_prefix.Checked;
                 PluginConfig.IISEnableRenameJsDir = this.checkBox_iis_rename_jsdir.Checked;
                 PluginConfig.IISReplaceJsRandom = this.txt_iis_replace_jsrandom.Text.Trim();
                 PluginConfig.IISEnableDeleteJsRandom = this.checkBox_iis_delete_jsrandom.Checked;
@@ -3234,10 +3236,15 @@ RETRY_IIS:
                         fileText = System.Text.Encoding.UTF8.GetString(btFile);
                     }
                     string newFileText = fileText;
+                    string prefix = "";
+                    if (PluginConfig.IISEnableRenameJsNamePrefix)
+                    {
+                        prefix = "/";
+                    }
                     foreach (var jsFile in fileNames)
                     {
                         //newFileText = newFileText.Replace(Path.GetFileName(jsFile.Key), Path.GetFileName(jsFile.Value));
-                        newFileText = Regex.Replace(newFileText, Path.GetFileName(jsFile.Key), Path.GetFileName(jsFile.Value), RegexOptions.IgnoreCase);
+                        newFileText = Regex.Replace(newFileText, $"{prefix}{Path.GetFileName(jsFile.Key)}", $"{prefix}{Path.GetFileName(jsFile.Value)}", RegexOptions.IgnoreCase);
                     }
                     using (FileStream fs = new FileStream(htmlFile, FileMode.Create, FileAccess.ReadWrite, FileShare.Read))
                     {

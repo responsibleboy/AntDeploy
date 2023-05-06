@@ -44,6 +44,10 @@ namespace AntDeployWinform.Models
         /// </summary>
         public bool IISEnableRenameJsDir { get; set; }
         /// <summary>
+        /// 替换js或css文件名时，是否前边带上斜杠“/”
+        /// </summary>
+        public bool IISEnableRenameJsNamePrefix { get; set; }
+        /// <summary>
         /// 是否替换html页面中引用js或css文件随机数
         /// </summary>
         public bool IISEnableReplaceJsRandom { get; set; }
