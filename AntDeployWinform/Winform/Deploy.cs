@@ -900,6 +900,7 @@ namespace AntDeployWinform.Winform
             this.txt_iis_replace_jsrandom.Text = PluginConfig.IISReplaceJsRandom;
             this.checkBox_iis_delete_jsrandom.Checked = PluginConfig.IISEnableDeleteJsRandom;
             this.checkBox_iis_replace_jsrandom.Checked = PluginConfig.IISEnableReplaceJsRandom;
+            this.txt_iis_rename_jsname_type.Text = PluginConfig.IISRenameJsNameType.ToString();
 
             this.checkBoxdocker_rep_enable.Checked = PluginConfig.DockerServiceEnableUpload;
             this.checkBoxdocker_rep_uploadOnly.Checked = PluginConfig.DockerServiceBuildImageOnly;
@@ -1058,6 +1059,7 @@ namespace AntDeployWinform.Winform
                 PluginConfig.IISReplaceJsRandom = this.txt_iis_replace_jsrandom.Text.Trim();
                 PluginConfig.IISEnableDeleteJsRandom = this.checkBox_iis_delete_jsrandom.Checked;
                 PluginConfig.IISEnableReplaceJsRandom = this.checkBox_iis_replace_jsrandom.Checked;
+                PluginConfig.IISRenameJsNameType = Util.CommandHelper.StringToInt(this.txt_iis_rename_jsname_type.Text.Trim(), 1);
 
                 PluginConfig.WindowsServiceEnableSelectDeploy = this.checkBox_select_deploy_service.Checked;
                 PluginConfig.LinuxServiceEnableSelectDeploy = this.checkBox_select_deploy_linuxservice.Checked;
@@ -3192,8 +3194,20 @@ RETRY_IIS:
                     {
                         continue;
                     }
+
+                    string flag = dateTimeFolderNameParent;
+                    if (PluginConfig.IISRenameJsNameType == 2)
+                    {
+                        flag = Util.FileHelper.GetMD5FromFilePath(jsFile, out string message);
+                        if (String.IsNullOrWhiteSpace(flag))
+                        {
+                            flag = dateTimeFolderNameParent;
+                            nlog.Error($"获取文件MD5失败，{message}，jsFile={jsFile}");
+                        }
+                    }
+
                     string fileName = Path.GetFileName(jsFile);
-                    string newFileName = $"{Path.GetFileNameWithoutExtension(jsFile)}_{dateTimeFolderNameParent}{extension}";
+                    string newFileName = $"{Path.GetFileNameWithoutExtension(jsFile)}_{flag}{extension}";
                     string newPath = Path.Combine(Path.GetDirectoryName(jsFile), newFileName);
                     File.Copy(jsFile, newPath, true);
                     fileNames[jsFile] = newPath;                    
@@ -3222,7 +3236,8 @@ RETRY_IIS:
                     string newFileText = fileText;
                     foreach (var jsFile in fileNames)
                     {
-                        newFileText = newFileText.Replace(Path.GetFileName(jsFile.Key), Path.GetFileName(jsFile.Value));
+                        //newFileText = newFileText.Replace(Path.GetFileName(jsFile.Key), Path.GetFileName(jsFile.Value));
+                        newFileText = Regex.Replace(newFileText, Path.GetFileName(jsFile.Key), Path.GetFileName(jsFile.Value), RegexOptions.IgnoreCase);
                     }
                     using (FileStream fs = new FileStream(htmlFile, FileMode.Create, FileAccess.ReadWrite, FileShare.Read))
                     {
@@ -4481,11 +4496,15 @@ RETRY_IIS2:
         {
             PluginConfig.IISEnableReplaceJsRandom = this.checkBox_iis_replace_jsrandom.Checked;
         }
+        private void txt_iis_rename_jsname_type_TextChanged(object sender, EventArgs e)
+        {
+            PluginConfig.IISRenameJsNameType = Util.CommandHelper.StringToInt(this.txt_iis_rename_jsname_type.Text.Trim(), 1);
+        }
+
         private void checkBox_Increment_docker_CheckedChanged(object sender, EventArgs e)
         {
             PluginConfig.DockerEnableIncrement = checkBox_Increment_docker.Checked;
         }
-
         private void checkBox_sudo_docker_CheckedChanged(object sender, EventArgs e)
         {
             PluginConfig.DockerEnableSudo = checkBox_sudo_docker.Checked;

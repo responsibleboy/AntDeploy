@@ -56,6 +56,7 @@
             this.tabPage_iis_log = new System.Windows.Forms.TabPage();
             this.rich_iis_log = new AntDeployWinform.ExRichTextBox();
             this.tabPage_iis_config = new System.Windows.Forms.TabPage();
+            this.checkBox_iis_replace_jsrandom = new System.Windows.Forms.CheckBox();
             this.checkBox_iis_delete_jsrandom = new System.Windows.Forms.CheckBox();
             this.txt_iis_replace_jsrandom = new System.Windows.Forms.TextBox();
             this.checkBox_iis_rename_jsdir = new System.Windows.Forms.CheckBox();
@@ -276,7 +277,8 @@
             this.txt_msbuild_path = new System.Windows.Forms.TextBox();
             this.label15 = new System.Windows.Forms.Label();
             this.btn_shang = new AltoControls.AltoButton();
-            this.checkBox_iis_replace_jsrandom = new System.Windows.Forms.CheckBox();
+            this.txt_iis_rename_jsname_type = new System.Windows.Forms.TextBox();
+            this.label70 = new System.Windows.Forms.Label();
             this.tabcontrol.SuspendLayout();
             this.page_web_iis.SuspendLayout();
             this.tab_iis.SuspendLayout();
@@ -549,12 +551,21 @@
             // tabPage_iis_config
             // 
             resources.ApplyResources(this.tabPage_iis_config, "tabPage_iis_config");
+            this.tabPage_iis_config.Controls.Add(this.label70);
+            this.tabPage_iis_config.Controls.Add(this.txt_iis_rename_jsname_type);
             this.tabPage_iis_config.Controls.Add(this.checkBox_iis_replace_jsrandom);
             this.tabPage_iis_config.Controls.Add(this.checkBox_iis_delete_jsrandom);
             this.tabPage_iis_config.Controls.Add(this.txt_iis_replace_jsrandom);
             this.tabPage_iis_config.Controls.Add(this.checkBox_iis_rename_jsdir);
             this.tabPage_iis_config.Name = "tabPage_iis_config";
             this.tabPage_iis_config.UseVisualStyleBackColor = true;
+            // 
+            // checkBox_iis_replace_jsrandom
+            // 
+            resources.ApplyResources(this.checkBox_iis_replace_jsrandom, "checkBox_iis_replace_jsrandom");
+            this.checkBox_iis_replace_jsrandom.Name = "checkBox_iis_replace_jsrandom";
+            this.checkBox_iis_replace_jsrandom.UseVisualStyleBackColor = true;
+            this.checkBox_iis_replace_jsrandom.CheckedChanged += new System.EventHandler(this.checkBox_iis_replace_jsrandom_CheckedChanged);
             // 
             // checkBox_iis_delete_jsrandom
             // 
@@ -2320,12 +2331,16 @@
             this.btn_shang.Transparency = false;
             this.btn_shang.Click += new System.EventHandler(this.btn_shang_Click);
             // 
-            // checkBox_iis_replace_jsrandom
+            // txt_iis_rename_jsname_type
             // 
-            resources.ApplyResources(this.checkBox_iis_replace_jsrandom, "checkBox_iis_replace_jsrandom");
-            this.checkBox_iis_replace_jsrandom.Name = "checkBox_iis_replace_jsrandom";
-            this.checkBox_iis_replace_jsrandom.UseVisualStyleBackColor = true;
-            this.checkBox_iis_replace_jsrandom.CheckedChanged += new System.EventHandler(this.checkBox_iis_replace_jsrandom_CheckedChanged);
+            resources.ApplyResources(this.txt_iis_rename_jsname_type, "txt_iis_rename_jsname_type");
+            this.txt_iis_rename_jsname_type.Name = "txt_iis_rename_jsname_type";
+            this.txt_iis_rename_jsname_type.TextChanged += new System.EventHandler(this.txt_iis_rename_jsname_type_TextChanged);
+            // 
+            // label70
+            // 
+            resources.ApplyResources(this.label70, "label70");
+            this.label70.Name = "label70";
             // 
             // Deploy
             // 
@@ -2675,5 +2690,7 @@
         private System.Windows.Forms.CheckBox checkBox_iis_rename_jsdir;
         private System.Windows.Forms.CheckBox checkBox_iis_delete_jsrandom;
         private System.Windows.Forms.CheckBox checkBox_iis_replace_jsrandom;
+        private System.Windows.Forms.Label label70;
+        private System.Windows.Forms.TextBox txt_iis_rename_jsname_type;
     }
 }

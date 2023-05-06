@@ -736,6 +736,29 @@ namespace AntDeployWinform.Util
             return string.Empty;
         }
 
+
+
+        /// <summary>
+        /// 字符串转换整数
+        /// </summary>
+        /// <param name="source">源字符串</param>
+        /// <param name="defaultnumber">转换失败返回的默认值</param>
+        /// <returns></returns>
+        public static int StringToInt(string source, int defaultnumber)
+        {
+            int temp = 0;
+            if (String.IsNullOrWhiteSpace(source))
+            {
+                return defaultnumber;
+            }
+            if (!int.TryParse(source, out temp))
+            {
+                return defaultnumber;
+            }
+
+            return temp;
+        }
+
     }
 
     public interface IlogProgress: IDisposable

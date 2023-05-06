@@ -55,6 +55,10 @@ namespace AntDeployWinform.Models
         /// 是否删除html页面中引用js或css文件随机数
         /// </summary>
         public bool IISEnableDeleteJsRandom { get; set; }
+        /// <summary>
+        /// 将js或css文件夹重命名类型，1：日期格式，2：MD5格式
+        /// </summary>
+        public int IISRenameJsNameType { get; set; }
 
         public bool WindowsServiceEnableIncrement { get; set; }
         public bool LinuxServiceEnableIncrement { get; set; }

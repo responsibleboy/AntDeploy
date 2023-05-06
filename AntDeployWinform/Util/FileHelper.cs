@@ -155,5 +155,40 @@ namespace AntDeployWinform.Util
             }
         }
 
+        /// <summary>
+        /// 实现对一个文件md5的读取，path为文件路径
+        /// </summary>
+        /// <param name="path">文件路径</param>
+        /// <param name="message"></param>
+        /// <returns></returns>
+        public static string GetMD5FromFilePath(string path, out string message)
+        {
+            message = "";
+            try
+            {
+                if (String.IsNullOrWhiteSpace(path) || !File.Exists(path))
+                {
+                    message = "文件不存在";
+                    return null;
+                }
+                string result = "";
+                using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+                {
+                    using (System.Security.Cryptography.MD5CryptoServiceProvider md5 = new System.Security.Cryptography.MD5CryptoServiceProvider())
+                    {
+                        byte[] hash_byte = md5.ComputeHash(fs);
+                        result = System.BitConverter.ToString(hash_byte);
+                    }
+                }
+                result = result.Replace("-", "");
+                return result;
+            }
+            catch (Exception ex)
+            {
+                message = ex.ToString();
+                return null;
+            }
+        }
+
     }
 }
