@@ -55,6 +55,13 @@
             this.progress_iis_tip = new System.Windows.Forms.Label();
             this.tabPage_iis_log = new System.Windows.Forms.TabPage();
             this.rich_iis_log = new AntDeployWinform.ExRichTextBox();
+            this.tabPage_iis_config = new System.Windows.Forms.TabPage();
+            this.label70 = new System.Windows.Forms.Label();
+            this.txt_iis_rename_jsname_type = new System.Windows.Forms.TextBox();
+            this.checkBox_iis_replace_jsrandom = new System.Windows.Forms.CheckBox();
+            this.checkBox_iis_delete_jsrandom = new System.Windows.Forms.CheckBox();
+            this.txt_iis_replace_jsrandom = new System.Windows.Forms.TextBox();
+            this.checkBox_iis_rename_jsdir = new System.Windows.Forms.CheckBox();
             this.page_docker = new System.Windows.Forms.TabPage();
             this.b_docker_deploy = new AltoControls.AltoButton();
             this.btn_docker_retry = new AltoControls.AltoButton();
@@ -271,11 +278,13 @@
             this.txt_msbuild_path = new System.Windows.Forms.TextBox();
             this.label15 = new System.Windows.Forms.Label();
             this.btn_shang = new AltoControls.AltoButton();
+            this.checkBox_iis_rename_jsname_prefix = new System.Windows.Forms.CheckBox();
             this.tabcontrol.SuspendLayout();
             this.page_web_iis.SuspendLayout();
             this.tab_iis.SuspendLayout();
             this.tabPage_progress.SuspendLayout();
             this.tabPage_iis_log.SuspendLayout();
+            this.tabPage_iis_config.SuspendLayout();
             this.page_docker.SuspendLayout();
             this.groupBox5.SuspendLayout();
             this.tabControl_docker.SuspendLayout();
@@ -507,7 +516,11 @@
             // 
             this.tab_iis.Controls.Add(this.tabPage_progress);
             this.tab_iis.Controls.Add(this.tabPage_iis_log);
+
             resources.ApplyResources(this.tab_iis, "tab_iis");
+
+            this.tab_iis.Controls.Add(this.tabPage_iis_config);
+
             this.tab_iis.Name = "tab_iis";
             this.tab_iis.SelectedIndex = 0;
             // 
@@ -538,6 +551,57 @@
             this.rich_iis_log.Name = "rich_iis_log";
             this.rich_iis_log.ReadOnly = true;
             this.rich_iis_log.TextColor = AntDeployWinform.RtfColor.Black;
+            // 
+            // tabPage_iis_config
+            // 
+            resources.ApplyResources(this.tabPage_iis_config, "tabPage_iis_config");
+            this.tabPage_iis_config.Controls.Add(this.checkBox_iis_rename_jsname_prefix);
+            this.tabPage_iis_config.Controls.Add(this.label70);
+            this.tabPage_iis_config.Controls.Add(this.txt_iis_rename_jsname_type);
+            this.tabPage_iis_config.Controls.Add(this.checkBox_iis_replace_jsrandom);
+            this.tabPage_iis_config.Controls.Add(this.checkBox_iis_delete_jsrandom);
+            this.tabPage_iis_config.Controls.Add(this.txt_iis_replace_jsrandom);
+            this.tabPage_iis_config.Controls.Add(this.checkBox_iis_rename_jsdir);
+            this.tabPage_iis_config.Name = "tabPage_iis_config";
+            this.tabPage_iis_config.UseVisualStyleBackColor = true;
+            // 
+            // label70
+            // 
+            resources.ApplyResources(this.label70, "label70");
+            this.label70.Name = "label70";
+            // 
+            // txt_iis_rename_jsname_type
+            // 
+            resources.ApplyResources(this.txt_iis_rename_jsname_type, "txt_iis_rename_jsname_type");
+            this.txt_iis_rename_jsname_type.Name = "txt_iis_rename_jsname_type";
+            this.txt_iis_rename_jsname_type.TextChanged += new System.EventHandler(this.txt_iis_rename_jsname_type_TextChanged);
+            // 
+            // checkBox_iis_replace_jsrandom
+            // 
+            resources.ApplyResources(this.checkBox_iis_replace_jsrandom, "checkBox_iis_replace_jsrandom");
+            this.checkBox_iis_replace_jsrandom.Name = "checkBox_iis_replace_jsrandom";
+            this.checkBox_iis_replace_jsrandom.UseVisualStyleBackColor = true;
+            this.checkBox_iis_replace_jsrandom.CheckedChanged += new System.EventHandler(this.checkBox_iis_replace_jsrandom_CheckedChanged);
+            // 
+            // checkBox_iis_delete_jsrandom
+            // 
+            resources.ApplyResources(this.checkBox_iis_delete_jsrandom, "checkBox_iis_delete_jsrandom");
+            this.checkBox_iis_delete_jsrandom.Name = "checkBox_iis_delete_jsrandom";
+            this.checkBox_iis_delete_jsrandom.UseVisualStyleBackColor = true;
+            this.checkBox_iis_delete_jsrandom.CheckedChanged += new System.EventHandler(this.checkBox_iis_delete_jsrandom_CheckedChanged);
+            // 
+            // txt_iis_replace_jsrandom
+            // 
+            resources.ApplyResources(this.txt_iis_replace_jsrandom, "txt_iis_replace_jsrandom");
+            this.txt_iis_replace_jsrandom.Name = "txt_iis_replace_jsrandom";
+            this.txt_iis_replace_jsrandom.TextChanged += new System.EventHandler(this.txt_iis_replace_jsrandom_TextChanged);
+            // 
+            // checkBox_iis_rename_jsdir
+            // 
+            resources.ApplyResources(this.checkBox_iis_rename_jsdir, "checkBox_iis_rename_jsdir");
+            this.checkBox_iis_rename_jsdir.Name = "checkBox_iis_rename_jsdir";
+            this.checkBox_iis_rename_jsdir.UseVisualStyleBackColor = true;
+            this.checkBox_iis_rename_jsdir.Click += new System.EventHandler(this.checkBox_iis_rename_jsdir_Click);
             // 
             // page_docker
             // 
@@ -2275,6 +2339,12 @@
             this.btn_shang.Transparency = false;
             this.btn_shang.Click += new System.EventHandler(this.btn_shang_Click);
             // 
+            // checkBox_iis_rename_jsname_prefix
+            // 
+            resources.ApplyResources(this.checkBox_iis_rename_jsname_prefix, "checkBox_iis_rename_jsname_prefix");
+            this.checkBox_iis_rename_jsname_prefix.Name = "checkBox_iis_rename_jsname_prefix";
+            this.checkBox_iis_rename_jsname_prefix.UseVisualStyleBackColor = true;
+            // 
             // Deploy
             // 
             resources.ApplyResources(this, "$this");
@@ -2322,6 +2392,8 @@
             this.tab_iis.ResumeLayout(false);
             this.tabPage_progress.ResumeLayout(false);
             this.tabPage_iis_log.ResumeLayout(false);
+            this.tabPage_iis_config.ResumeLayout(false);
+            this.tabPage_iis_config.PerformLayout();
             this.page_docker.ResumeLayout(false);
             this.page_docker.PerformLayout();
             this.groupBox5.ResumeLayout(false);
@@ -2615,7 +2687,18 @@
         private System.Windows.Forms.TabPage tabPage_ssh;
         private System.Windows.Forms.Label label68;
         private System.Windows.Forms.TextBox txt_docker_workspace;
+
         private System.Windows.Forms.CheckBox chk_use_AsiaShanghai_timezone;
         private System.Windows.Forms.GroupBox groupBox6;
+
+        private System.Windows.Forms.TabPage tabPage_iis_config;
+        private System.Windows.Forms.TextBox txt_iis_replace_jsrandom;
+        private System.Windows.Forms.CheckBox checkBox_iis_rename_jsdir;
+        private System.Windows.Forms.CheckBox checkBox_iis_delete_jsrandom;
+        private System.Windows.Forms.CheckBox checkBox_iis_replace_jsrandom;
+        private System.Windows.Forms.Label label70;
+        private System.Windows.Forms.TextBox txt_iis_rename_jsname_type;
+        private System.Windows.Forms.CheckBox checkBox_iis_rename_jsname_prefix;
+
     }
 }

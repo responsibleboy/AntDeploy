@@ -23,6 +23,7 @@ using Exception = System.Exception;
 using Process = System.Diagnostics.Process;
 using MessageBoxEx = AntDeployWinform.Models.MessageBoxEx;
 using Renci.SshNet.Messages;
+using System.Text.RegularExpressions;
 
 namespace AntDeployWinform.Winform
 {
@@ -892,6 +893,12 @@ namespace AntDeployWinform.Winform
             this.checkBox_select_deploy_iis.Checked = PluginConfig.IISEnableSelectDeploy;
             this.txt_folder_deploy.Text = PluginConfig.DeployFolderPath;
             this.txt_http_proxy.Text = PluginConfig.DeployHttpProxy;
+            this.checkBox_iis_rename_jsdir.Checked = PluginConfig.IISEnableRenameJsDir;
+            this.checkBox_iis_rename_jsname_prefix.Checked = PluginConfig.IISEnableRenameJsNamePrefix;
+            this.txt_iis_replace_jsrandom.Text = PluginConfig.IISReplaceJsRandom;
+            this.checkBox_iis_delete_jsrandom.Checked = PluginConfig.IISEnableDeleteJsRandom;
+            this.checkBox_iis_replace_jsrandom.Checked = PluginConfig.IISEnableReplaceJsRandom;
+            this.txt_iis_rename_jsname_type.Text = PluginConfig.IISRenameJsNameType.ToString();
 
             this.checkBoxdocker_rep_enable.Checked = PluginConfig.DockerServiceEnableUpload;
             this.checkBoxdocker_rep_uploadOnly.Checked = PluginConfig.DockerServiceBuildImageOnly;
@@ -1044,6 +1051,15 @@ namespace AntDeployWinform.Winform
                 PluginConfig.WindowsServiceEnableIncrement = this.checkBox_Increment_window_service.Checked;
                 PluginConfig.LinuxServiceEnableIncrement = this.checkBox_Increment_linux_service.Checked;
                 PluginConfig.IISEnableSelectDeploy = this.checkBox_select_deploy_iis.Checked;
+                PluginConfig.IISEnableNotStopSiteDeploy = this.checkBox_iis_restart_site.Checked;
+                PluginConfig.IISEnableUseOfflineHtm = this.checkBox_iis_use_offlinehtm.Checked;
+                PluginConfig.IISEnableRenameJsNamePrefix = this.checkBox_iis_rename_jsname_prefix.Checked;
+                PluginConfig.IISEnableRenameJsDir = this.checkBox_iis_rename_jsdir.Checked;
+                PluginConfig.IISReplaceJsRandom = this.txt_iis_replace_jsrandom.Text.Trim();
+                PluginConfig.IISEnableDeleteJsRandom = this.checkBox_iis_delete_jsrandom.Checked;
+                PluginConfig.IISEnableReplaceJsRandom = this.checkBox_iis_replace_jsrandom.Checked;
+                PluginConfig.IISRenameJsNameType = Util.CommandHelper.StringToInt(this.txt_iis_rename_jsname_type.Text.Trim(), 1);
+
                 PluginConfig.WindowsServiceEnableSelectDeploy = this.checkBox_select_deploy_service.Checked;
                 PluginConfig.LinuxServiceEnableSelectDeploy = this.checkBox_select_deploy_linuxservice.Checked;
                 PluginConfig.LinuxServiceNotifySystemd = this.checkBox_select_type_linuxservice.Checked;
@@ -3146,6 +3162,251 @@ RETRY_IIS:
             }
         }
 
+        /// <summary>
+        /// 重命名文件，js或css文件
+        /// </summary>
+        /// <param name="fileList"></param>
+        /// <param name="dateTimeFolderNameParent"></param>
+        /// <param name="nlog"></param>
+        private void RenameJsCss(List<string> fileList, string dateTimeFolderNameParent, Logger nlog)
+        {
+            try
+            {
+                if (!PluginConfig.IISEnableRenameJsDir) return;
+
+                if (fileList == null || fileList.Count <= 0 || string.IsNullOrEmpty(dateTimeFolderNameParent))
+                {
+                    return;
+                }
+
+                //var folder = new DirectoryInfo(publishPath);
+                //var newFolder = Path.Combine(folder.Parent.FullName, folder.Name + "_deploy_packages");
+                //if (!Directory.Exists(newFolder)) Directory.CreateDirectory(newFolder);
+
+                //var jsFiles = Directory.GetFiles(publishPath, "*.js|*.css", SearchOption.AllDirectories);
+                Dictionary<string, string> fileNames = new Dictionary<string, string>();
+                foreach (var jsFile in fileList)
+                {
+                    string extension = Path.GetExtension(jsFile);
+                    if (!String.Equals(".js", extension, StringComparison.OrdinalIgnoreCase)
+                        && !String.Equals(".css", extension, StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
+
+                    string flag = dateTimeFolderNameParent;
+                    if (PluginConfig.IISRenameJsNameType == 2)
+                    {
+                        flag = Util.FileHelper.GetMD5FromFilePath(jsFile, out string message);
+                        if (String.IsNullOrWhiteSpace(flag))
+                        {
+                            flag = dateTimeFolderNameParent;
+                            nlog.Error($"获取文件MD5失败，{message}，jsFile={jsFile}");
+                        }
+                    }
+
+                    string fileName = Path.GetFileName(jsFile);
+                    string newFileName = $"{Path.GetFileNameWithoutExtension(jsFile)}_{flag}{extension}";
+                    string newPath = Path.Combine(Path.GetDirectoryName(jsFile), newFileName);
+                    File.Copy(jsFile, newPath, true);
+                    fileNames[jsFile] = newPath;                    
+                }
+                nlog.Info($"共有{fileNames.Count}个js或css文件重命名");
+                if (fileNames.Count <= 0) return;
+                fileList.AddRange(fileNames.Values);
+
+                //var htmlFiles = Directory.GetFiles(publishPath, "*.html", SearchOption.AllDirectories);
+                int htmlCount = 0;
+                foreach (var htmlFile in fileList)
+                {
+                    string extension = Path.GetExtension(htmlFile);
+                    if (!String.Equals(".html", extension, StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
+                    string fileText = "";
+                    using (FileStream fs = new FileStream(htmlFile, FileMode.Open, FileAccess.Read, FileShare.Read))
+                    {
+                        byte[] btFile = new byte[fs.Length];
+                        fs.Seek(0, SeekOrigin.Begin);
+                        fs.Read(btFile, 0, btFile.Length);
+                        fileText = System.Text.Encoding.UTF8.GetString(btFile);
+                    }
+                    string newFileText = fileText;
+                    string prefix = "";
+                    if (PluginConfig.IISEnableRenameJsNamePrefix)
+                    {
+                        prefix = "/";
+                    }
+                    foreach (var jsFile in fileNames)
+                    {
+                        //newFileText = newFileText.Replace(Path.GetFileName(jsFile.Key), Path.GetFileName(jsFile.Value));
+                        newFileText = Regex.Replace(newFileText, $"{prefix}{Path.GetFileName(jsFile.Key)}", $"{prefix}{Path.GetFileName(jsFile.Value)}", RegexOptions.IgnoreCase);
+                    }
+                    using (FileStream fs = new FileStream(htmlFile, FileMode.Create, FileAccess.ReadWrite, FileShare.Read))
+                    {
+                        byte[] btFile = System.Text.Encoding.UTF8.GetBytes(newFileText);
+                        fs.Write(btFile, 0, btFile.Length);
+                    }
+                    htmlCount++;
+                }
+                nlog.Info($"共有{htmlCount}个html文件重新引用js或css文件");
+            }
+            catch (Exception ex)
+            {
+                nlog.Error(ex, $"重命名js或css文件异常，RenameJsCss(fileList.Count={fileList.Count}, dateTimeFolderNameParent={dateTimeFolderNameParent})");
+            }
+        }
+
+        /// <summary>
+        /// 替换html页面中引用js或css文件随机数(正则)
+        /// </summary>
+        /// <param name="fileList"></param>
+        /// <param name="dateTimeFolderNameParent"></param>
+        /// <param name="nlog"></param>
+        private void ReplaceJsCssRandom(List<string> fileList, string dateTimeFolderNameParent, Logger nlog)
+        {
+            try
+            {
+                if (String.IsNullOrWhiteSpace(PluginConfig.IISReplaceJsRandom) || !PluginConfig.IISEnableReplaceJsRandom) return;
+
+                if (fileList == null || fileList.Count <= 0 || string.IsNullOrEmpty(dateTimeFolderNameParent))
+                {
+                    return;
+                }
+
+                string[] temps = PluginConfig.IISReplaceJsRandom.Split('=');
+                string prefix = "";
+                if (temps.Length >= 2)
+                {
+                    prefix = temps[0].Replace("[", "").Replace("]", "") + "=";
+                }
+
+                //var folder = new DirectoryInfo(publishPath);
+                //var htmlFiles = Directory.GetFiles(publishPath, "*.html", SearchOption.AllDirectories);
+                int htmlCount = 0;
+                foreach (var htmlFile in fileList)
+                {
+                    string extension = Path.GetExtension(htmlFile);
+                    if (!String.Equals(".html", extension, StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
+                    string fileText = "";
+                    using (FileStream fs = new FileStream(htmlFile, FileMode.Open, FileAccess.Read, FileShare.Read))
+                    {
+                        byte[] btFile = new byte[fs.Length];
+                        fs.Seek(0, SeekOrigin.Begin);
+                        fs.Read(btFile, 0, btFile.Length);
+                        fileText = System.Text.Encoding.UTF8.GetString(btFile);
+                    }
+                    string newFileText = "";
+                    if (PluginConfig.IISEnableDeleteJsRandom)
+                    {
+                        newFileText = Regex.Replace(fileText, PluginConfig.IISReplaceJsRandom, "", RegexOptions.IgnoreCase);
+                    }
+                    else
+                    {
+                        //newFileText = Regex.Replace(fileText, @"[?]r=(\d{14}|\d{16})", $"?r={DateTime.Now.ToString("yyyyMMddHHmmssff")}", RegexOptions.IgnoreCase);
+                        newFileText = Regex.Replace(fileText, PluginConfig.IISReplaceJsRandom, $"{prefix}{dateTimeFolderNameParent}", RegexOptions.IgnoreCase);
+                    }
+                    using (FileStream fs = new FileStream(htmlFile, FileMode.Create, FileAccess.ReadWrite, FileShare.Read))
+                    {
+                        byte[] btFile = System.Text.Encoding.UTF8.GetBytes(newFileText);
+                        fs.Write(btFile, 0, btFile.Length);
+                    }
+                    htmlCount++;
+                }
+                nlog.Info($"共有{htmlCount}个html文件替换页面中引用js或css文件随机数");
+            }
+            catch (Exception ex)
+            {
+                nlog.Error(ex, $"替换html页面中引用js或css文件随机数异常，ReplaceJsCssRandom(fileList.Count={fileList.Count}, dateTimeFolderNameParent={dateTimeFolderNameParent})");
+            }
+        }
+
+        /// <summary>
+        /// 保存压缩包
+        /// </summary>
+        /// <param name="zipBytes"></param>
+        /// <param name="publishPath"></param>
+        /// <param name="dateTimeFolderNameParent"></param>
+        /// <param name="nlog"></param>
+        private void SavePublishZipFile(byte[] zipBytes, string publishPath, string dateTimeFolderNameParent, Logger nlog)
+        {
+            try
+            {
+                if (zipBytes == null
+                    || zipBytes.Length <= 0
+                    || string.IsNullOrEmpty(publishPath)
+                    || string.IsNullOrEmpty(dateTimeFolderNameParent)
+                    || !Directory.Exists(publishPath))
+                {
+                    return;
+                }
+
+                var folder = new DirectoryInfo(publishPath);
+                var logFolder = Path.Combine(folder.Parent.FullName, folder.Name + "_deploy_packages");
+                if (!Directory.Exists(logFolder)) Directory.CreateDirectory(logFolder);
+
+                //删除10天前的文件
+                var allFiles = Directory.GetFiles(logFolder, "*", SearchOption.AllDirectories);
+                foreach (var file in allFiles)
+                {
+                    string fileName = Path.GetFileNameWithoutExtension(file);
+                    string[] temps = fileName.Split('_');
+                    string dateStr = temps[temps.Length - 1];
+                    DateTime dt;
+                    if (DateTime.TryParseExact(dateStr,
+                        new string[] { "yyyyMMddHHmmss" },
+                        System.Globalization.CultureInfo.InvariantCulture,
+                        System.Globalization.DateTimeStyles.None,
+                        out dt))
+                    {
+                        var diff = DateTime.Now - dt;
+                        if (diff.TotalDays > 10)
+                        {
+                            File.Delete(file);
+                        }
+                    }
+                }
+
+                string zipFile = Path.Combine(logFolder, $"{folder.Name}_publish_{dateTimeFolderNameParent}.zip");
+                using (FileStream fs = new FileStream(zipFile, FileMode.Create, FileAccess.ReadWrite, FileShare.Read))
+                {
+                    fs.Write(zipBytes, 0, zipBytes.Length);
+                }
+
+                LogEventInfo publisEvent2 = new LogEventInfo(LogLevel.Info, "", "【保存本地压缩包文件】 ==> ");
+                if (nlog == nlog_iis)
+                {
+                    publisEvent2.LoggerName = "rich_iis_log";
+                }
+                else if (nlog == nlog_image)
+                {
+                    publisEvent2.LoggerName = "rich_docker_image_log";
+                }
+                else if (nlog == nlog_docker)
+                {
+                    publisEvent2.LoggerName = "rich_docker_log";
+                }
+                else if (nlog == nlog_windowservice)
+                {
+                    publisEvent2.LoggerName = "rich_windowservice_log";
+                }
+                else if (nlog == nlog_linux)
+                {
+                    publisEvent2.LoggerName = "rich_linuxservice_log";
+                }
+                publisEvent2.Properties["ShowLink"] = "file://" + zipFile.Replace("\\", "\\\\");
+                nlog.Log(publisEvent2);
+            }
+            catch (Exception ex)
+            {
+                nlog.Error(ex, $"保存压缩包文件异常，SavePublishZipFile(zipBytes.Length={zipBytes.Length}, publishPath={publishPath}, dateTimeFolderNameParent={dateTimeFolderNameParent})");
+            }
+        }
+
         private void DoSelectDeployIIS(List<string> fileList, string publishPath, List<Server> serverList, List<string> backUpIgnoreList, 
             string Port, string PoolName, string PhysicalPath, bool alwaysRun, GitClient gitModel, string remark, List<string> ignoreList)
         {
@@ -3153,7 +3414,8 @@ RETRY_IIS:
             {
                 new Task(async () =>
                 {
-                    var dateTimeFolderNameParent = string.Empty;
+                    //var dateTimeFolderNameParent = string.Empty;
+                    string dateTimeFolderNameParent = DateTime.Now.ToString("yyyyMMddHHmmss");
                     try
                     {
                         if (stop_iis_cancel_token)
@@ -3171,6 +3433,12 @@ RETRY_IIS:
                         this.nlog_iis.Info("Select Files count:" + fileList.Count);
                         //this.nlog_iis.Debug("ignore package ignoreList");
                         this.nlog_iis.Info($"package ignoreList Count:{ignoreList.Count}, backUp IgnoreList Count:{backUpIgnoreList.Count}");
+
+                        this.nlog_iis.Info("重命名js或css文件");
+                        this.RenameJsCss(fileList, dateTimeFolderNameParent, this.nlog_iis);
+                        this.nlog_iis.Info("替换html页面中引用js或css文件随机数");
+                        this.ReplaceJsCssRandom(fileList, dateTimeFolderNameParent, this.nlog_iis);
+                        
                         byte[] zipBytes = null;
                         //List<string> ignoreList = new List<string>();
                         try
@@ -3196,12 +3464,15 @@ RETRY_IIS:
                             PackageError(this.tabPage_progress, serverList.First().Host);
                             return;
                         }
+
+                        //本地保存压缩包
+                        this.SavePublishZipFile(zipBytes, publishPath, dateTimeFolderNameParent, this.nlog_iis);
+
                         var packageSize = (zipBytes.Length / 1024 / 1024);
                         this.nlog_iis.Info($"package success,package size:{(packageSize > 0 ? (packageSize + "") : "<1")}M");
                         var loggerId = Guid.NewGuid().ToString("N");
                         //执行 上传
-                        this.nlog_iis.Info("-----------------Deploy Start-----------------");
-                        dateTimeFolderNameParent = DateTime.Now.ToString("yyyyMMddHHmmss");
+                        this.nlog_iis.Info("-----------------Deploy Start-----------------");                        
                         var allfailServerList = new List<Server>();
                         var retryTimes = 0;
 RETRY_IIS2:
@@ -4213,11 +4484,31 @@ RETRY_IIS2:
         {
             PluginConfig.IISEnableUseOfflineHtm = checkBox_iis_use_offlinehtm.Checked;
         }
+        private void checkBox_iis_rename_jsdir_Click(object sender, EventArgs e)
+        {
+            PluginConfig.IISEnableRenameJsDir = this.checkBox_iis_rename_jsdir.Checked;
+        }
+        private void txt_iis_replace_jsrandom_TextChanged(object sender, EventArgs e)
+        {
+            PluginConfig.IISReplaceJsRandom = this.txt_iis_replace_jsrandom.Text.Trim();
+        }
+        private void checkBox_iis_delete_jsrandom_CheckedChanged(object sender, EventArgs e)
+        {
+            PluginConfig.IISEnableDeleteJsRandom = this.checkBox_iis_delete_jsrandom.Checked;
+        }
+        private void checkBox_iis_replace_jsrandom_CheckedChanged(object sender, EventArgs e)
+        {
+            PluginConfig.IISEnableReplaceJsRandom = this.checkBox_iis_replace_jsrandom.Checked;
+        }
+        private void txt_iis_rename_jsname_type_TextChanged(object sender, EventArgs e)
+        {
+            PluginConfig.IISRenameJsNameType = Util.CommandHelper.StringToInt(this.txt_iis_rename_jsname_type.Text.Trim(), 1);
+        }
+
         private void checkBox_Increment_docker_CheckedChanged(object sender, EventArgs e)
         {
             PluginConfig.DockerEnableIncrement = checkBox_Increment_docker.Checked;
         }
-
         private void checkBox_sudo_docker_CheckedChanged(object sender, EventArgs e)
         {
             PluginConfig.DockerEnableSudo = checkBox_sudo_docker.Checked;
@@ -10253,5 +10544,6 @@ RETRY_WINDOWSSERVICE2:
                 if (GlobalConfig.EnableAntDeployJson && !string.IsNullOrEmpty(ProjectConfigPath.Item2)) File.WriteAllText(ProjectConfigPath.Item2, configJson, Encoding.UTF8);
             }
         }
+
     }
 }

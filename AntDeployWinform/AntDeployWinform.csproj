@@ -212,6 +212,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Winform\Deploy.zh-CN.resx">
       <DependentUpon>Deploy.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Winform\Deploy.zh-Hans.resx">
       <DependentUpon>Deploy.cs</DependentUpon>
@@ -245,6 +246,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Winform\SelectFile.resx">
       <DependentUpon>SelectFile.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Winform\SelectFile.zh-CN.resx">
       <DependentUpon>SelectFile.cs</DependentUpon>

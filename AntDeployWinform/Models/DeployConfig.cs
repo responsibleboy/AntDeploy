@@ -22,10 +22,47 @@ namespace AntDeployWinform.Models
         public string DeployFolderPath { get; set; }
         public string DeployHttpProxy { get; set; }
         public int LastTabIndex { get; set; }
+        /// <summary>
+        /// 增量发布
+        /// </summary>
         public bool IISEnableIncrement { get; set; }
+        /// <summary>
+        /// 选择指定文件发布
+        /// </summary>
         public bool IISEnableSelectDeploy { get; set; }
+        /// <summary>
+        /// 不关闭站点
+        /// </summary>
         public bool IISEnableNotStopSiteDeploy { get; set; }
+        /// <summary>
+        /// 使用app_offline.htm
+        /// </summary>
         public bool IISEnableUseOfflineHtm { get; set; }
+        /// <summary>
+        /// 是否将js或css文件夹重命名
+        /// </summary>
+        public bool IISEnableRenameJsDir { get; set; }
+        /// <summary>
+        /// 替换js或css文件名时，是否前边带上斜杠“/”
+        /// </summary>
+        public bool IISEnableRenameJsNamePrefix { get; set; }
+        /// <summary>
+        /// 是否替换html页面中引用js或css文件随机数
+        /// </summary>
+        public bool IISEnableReplaceJsRandom { get; set; }
+        /// <summary>
+        /// 替换html页面中引用js或css文件随机数(正则)
+        /// </summary>
+        public string IISReplaceJsRandom { get; set; }
+        /// <summary>
+        /// 是否删除html页面中引用js或css文件随机数
+        /// </summary>
+        public bool IISEnableDeleteJsRandom { get; set; }
+        /// <summary>
+        /// 将js或css文件夹重命名类型，1：日期格式，2：MD5格式
+        /// </summary>
+        public int IISRenameJsNameType { get; set; }
+
         public bool WindowsServiceEnableIncrement { get; set; }
         public bool LinuxServiceEnableIncrement { get; set; }
         public bool WindowsServiceEnableSelectDeploy { get; set; }
