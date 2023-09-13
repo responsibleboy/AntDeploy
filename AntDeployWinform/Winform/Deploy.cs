@@ -510,9 +510,9 @@ namespace AntDeployWinform.Winform
         private void NlogConfig()
         {
 
-            #region Nlog
+            #region Nlog 修改过的dll 不能升级，否则会导致在某些windows系统上出现中文乱码的问题
             
-            /*
+        
             var config = new LoggingConfiguration();
             var richTarget = new RichTextBoxTarget
             {
@@ -626,8 +626,7 @@ namespace AntDeployWinform.Winform
             config.LoggingRules.Add(rule5);
 
             LogManager.Configuration = config;
-            */
-            LogManager.Setup().SetupExtensions(ext => ext.RegisterAssembly(typeof(RichTextBoxTarget).Assembly));
+            
             nlog_iis = NLog.LogManager.GetLogger("rich_iis_log");
             nlog_windowservice = NLog.LogManager.GetLogger("rich_windowservice_log");
             nlog_linux = NLog.LogManager.GetLogger("rich_linuxservice_log");
@@ -673,8 +672,6 @@ namespace AntDeployWinform.Winform
         private void Reload()
         {
             this.checkBox_Chinese.Checked = GlobalConfig.IsChinease;
-            ProgressBox.IsEnableGroup = GlobalConfig.EnableEnvGroup;
-            this.chk_global_useCheckBox.Checked = GlobalConfig.EnableEnvGroup;
             this.chk_global_saveconfig_in_projectFolder.Checked = GlobalConfig.EnableAntDeployJson;
             this.chk_use_AsiaShanghai_timezone.Checked = GlobalConfig.UseAsiaShanghai;
             this.checkBox_save_deploy_log.Checked = GlobalConfig.SaveLogs;
@@ -8765,11 +8762,6 @@ RETRY_DOCKER:
             this.rich_config_log.Text = "";
         }
 
-        private void chk_global_useCheckBox_Click(object sender, EventArgs e)
-        {
-            GlobalConfig.EnableEnvGroup = this.chk_global_useCheckBox.Checked;
-            MessageBoxEx.ShowOk(this, "please reload antdeploy!");
-        }
 
         private void checkBox_Increment_linux_service_CheckedChanged(object sender, EventArgs e)
         {
