@@ -100,7 +100,10 @@ namespace AntDeployAgent.MyApp.Service.Impl
                 if (string.IsNullOrEmpty(service.Item2)) //没有找到该服务的workingFolder 可能是service描述文件内容不对，可能是服务不存在
                 {
                     Log($"systemctlService : {_serviceName} not found,start to create!");
-                    return $"systemctlService : {_serviceName} not found!";
+                    if (String.IsNullOrWhiteSpace(_physicalPath))
+                    {
+                        return $"systemctlService : {_serviceName} not found!";
+                    }
 
                     //创建发布目录
                     var firstDeployFolder = string.IsNullOrEmpty(_physicalPath) ? Path.Combine(projectPath, "deploy") : _physicalPath;

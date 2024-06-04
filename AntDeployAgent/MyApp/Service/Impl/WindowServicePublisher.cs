@@ -98,7 +98,10 @@ namespace AntDeployAgent.MyApp.Service.Impl
                 if (service.Item1 == null)
                 {
                     Log($"windowService : {_serviceName} not found,start to create!");
-                    return $"windowService : {_serviceName} not found!";
+                    if (String.IsNullOrWhiteSpace(_physicalPath))
+                    {
+                        return $"windowService : {_serviceName} not found!";
+                    }
 
                     //创建发布目录
                     var firstDeployFolder = string.IsNullOrEmpty(_physicalPath) ? Path.Combine(projectPath, "deploy") : _physicalPath;
