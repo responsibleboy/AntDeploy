@@ -31,7 +31,7 @@ namespace AntDeployWinform.Winform
     public partial class Deploy : CCSkinMain
     {
         private AutoResetEvent Condition { get; set; }
-        private Tuple<string,string> ProjectConfigPath;
+        private Tuple<string, string> ProjectConfigPath;
         private string ProjectFolderPath;
         private string ProjectName;
         private string ProjectPath;
@@ -75,7 +75,7 @@ namespace AntDeployWinform.Winform
         private string _formText = "";
         private SystemMenu systemMemu;
         public Deploy(string projectPath = null, ProjectParam project = null)
-        {            
+        {
             this.Deploy_InitLoad(projectPath, project);
         }
 
@@ -86,8 +86,8 @@ namespace AntDeployWinform.Winform
         /// <param name="project"></param>
         /// <param name="isFirstLoad">首次加载</param>
         public void Deploy_InitLoad(string projectPath, ProjectParam project, bool isFirstLoad = true)
-        {            
-            ConfigPath = ProjectHelper.GetPluginConfigPath();
+        {
+            ConfigPath = ProjectHelper.GetPluginConfigPath(ProjectFolderPath);
             ReadConfig(ConfigPath);
 
             if (isFirstLoad)
@@ -406,7 +406,7 @@ namespace AntDeployWinform.Winform
 
         private void Init(string projectPath, ProjectParam project = null, bool isFirst = true)
         {
-            if (string.IsNullOrEmpty(projectPath) || (project!=null && project.OpenNewWindow))
+            if (string.IsNullOrEmpty(projectPath) || (project != null && project.OpenNewWindow))
             {
                 if (isFirst)
                 {
@@ -427,7 +427,7 @@ namespace AntDeployWinform.Winform
                     this.Close();
                     return;
                 }
-                else if(r == DialogResult.OK)
+                else if (r == DialogResult.OK)
                 {
                     projectPath = selectProject.SelectProjectPath;
                 }
@@ -493,7 +493,7 @@ namespace AntDeployWinform.Winform
             _project = project;
             CommandHelper.MsBuildPath = _project?.MsBuildPath;
             ReadPorjectConfig(projectPath);
-            PluginConfigPath = ProjectHelper.GetPluginConfigPath(projectPath);
+            PluginConfigPath = ProjectHelper.GetPluginConfigPath(ProjectFolderPath, projectPath);
             ReadPluginConfig(PluginConfigPath);
             if (Directory.Exists(projectPath))
             {
@@ -512,8 +512,8 @@ namespace AntDeployWinform.Winform
         {
 
             #region Nlog 修改过的dll 不能升级，否则会导致在某些windows系统上出现中文乱码的问题
-            
-        
+
+
             var config = new LoggingConfiguration();
             var richTarget = new RichTextBoxTarget
             {
@@ -526,7 +526,7 @@ namespace AntDeployWinform.Winform
                 MaxLines = 0,
                 AllowAccessoryFormCreation = false,
                 SupportLinks = true,
-                UseDefaultRowColoringRules = true,                
+                UseDefaultRowColoringRules = true,
             };
             config.AddTarget("rich_iis_log", richTarget);
             LoggingRule rule1 = new LoggingRule("*", LogLevel.Debug, richTarget);
@@ -627,7 +627,7 @@ namespace AntDeployWinform.Winform
             config.LoggingRules.Add(rule5);
 
             LogManager.Configuration = config;
-            
+
             nlog_iis = NLog.LogManager.GetLogger("rich_iis_log");
             nlog_windowservice = NLog.LogManager.GetLogger("rich_windowservice_log");
             nlog_linux = NLog.LogManager.GetLogger("rich_linuxservice_log");
@@ -881,6 +881,7 @@ namespace AntDeployWinform.Winform
 
             this.checkBox_iis_restart_site.Checked = PluginConfig.IISEnableNotStopSiteDeploy;
             this.checkBox_iis_use_offlinehtm.Checked = PluginConfig.IISEnableUseOfflineHtm;
+            this.checkBox_iis_backup.Checked = PluginConfig.IISEnableBackup;
             this.checkBox_Increment_iis.Checked = PluginConfig.IISEnableIncrement;
             this.checkBox_Increment_docker.Checked = PluginConfig.DockerEnableIncrement;
             this.checkBox_sudo_docker.Checked = PluginConfig.DockerEnableSudo;
@@ -888,8 +889,10 @@ namespace AntDeployWinform.Winform
             this.checkBox_Increment_window_service.Checked = PluginConfig.WindowsServiceEnableIncrement;
             this.checkBox_Increment_linux_service.Checked = PluginConfig.LinuxServiceEnableIncrement;
             this.checkBox_select_deploy_service.Checked = PluginConfig.WindowsServiceEnableSelectDeploy;
+            this.checkBox_backup_windows_server.Checked = PluginConfig.WindowsServiceEnableBackup;
             this.checkBox_select_deploy_linuxservice.Checked = PluginConfig.LinuxServiceEnableSelectDeploy;
             this.checkBox_select_type_linuxservice.Checked = PluginConfig.LinuxServiceNotifySystemd;
+            this.checkBox_backup_linux_service.Checked = PluginConfig.LinuxServiceEnableBackup;
             this.checkBox_select_deploy_iis.Checked = PluginConfig.IISEnableSelectDeploy;
             this.txt_folder_deploy.Text = PluginConfig.DeployFolderPath;
             this.txt_http_proxy.Text = PluginConfig.DeployHttpProxy;
@@ -1001,7 +1004,7 @@ namespace AntDeployWinform.Winform
         /// 保存配置
         /// </summary>
         /// <param name="dispose"></param>
-        private void Unload(bool dispose=true)
+        private void Unload(bool dispose = true)
         {
             try
             {
@@ -1053,6 +1056,7 @@ namespace AntDeployWinform.Winform
                 PluginConfig.IISEnableSelectDeploy = this.checkBox_select_deploy_iis.Checked;
                 PluginConfig.IISEnableNotStopSiteDeploy = this.checkBox_iis_restart_site.Checked;
                 PluginConfig.IISEnableUseOfflineHtm = this.checkBox_iis_use_offlinehtm.Checked;
+                PluginConfig.IISEnableBackup = this.checkBox_iis_backup.Checked;
                 PluginConfig.IISEnableRenameJsNamePrefix = this.checkBox_iis_rename_jsname_prefix.Checked;
                 PluginConfig.IISEnableRenameJsDir = this.checkBox_iis_rename_jsdir.Checked;
                 PluginConfig.IISReplaceJsRandom = this.txt_iis_replace_jsrandom.Text.Trim();
@@ -1061,8 +1065,10 @@ namespace AntDeployWinform.Winform
                 PluginConfig.IISRenameJsNameType = Util.CommandHelper.StringToInt(this.txt_iis_rename_jsname_type.Text.Trim(), 1);
 
                 PluginConfig.WindowsServiceEnableSelectDeploy = this.checkBox_select_deploy_service.Checked;
+                PluginConfig.WindowsServiceEnableBackup = this.checkBox_backup_windows_server.Checked;
                 PluginConfig.LinuxServiceEnableSelectDeploy = this.checkBox_select_deploy_linuxservice.Checked;
                 PluginConfig.LinuxServiceNotifySystemd = this.checkBox_select_type_linuxservice.Checked;
+                PluginConfig.LinuxServiceEnableBackup = this.checkBox_backup_linux_service.Checked;
                 PluginConfig.DeployFolderPath = this.txt_folder_deploy.Text.Trim();
                 PluginConfig.DeployHttpProxy = this.txt_http_proxy.Text.Trim();
 
@@ -2695,7 +2701,7 @@ namespace AntDeployWinform.Winform
                     dateTimeFolderNameParent = DateTime.Now.ToString("yyyyMMddHHmmss");
                     var allfailServerList = new List<Server>();
                     var retryTimes = 0;
-RETRY_IIS:
+                RETRY_IIS:
                     var failServerList = new List<Server>();
                     var index = 0;
                     var allSuccess = true;
@@ -2910,6 +2916,7 @@ RETRY_IIS:
                         httpRequestClient.SetFieldValue("remark", confirmResult.Item2);
                         httpRequestClient.SetFieldValue("useTempPhysicalPath", PluginConfig.IISEnableNotStopSiteDeploy ? "true" : "");
                         httpRequestClient.SetFieldValue("useOfflineHtm", PluginConfig.IISEnableUseOfflineHtm ? "true" : "");
+                        httpRequestClient.SetFieldValue("isBackup", PluginConfig.IISEnableBackup ? "true" : "false");
                         httpRequestClient.SetFieldValue("mac", CodingHelper.GetMacAddress());
                         httpRequestClient.SetFieldValue("pc", System.Environment.MachineName);
                         httpRequestClient.SetFieldValue("localIp", CodingHelper.GetLocalIPAddress());
@@ -3209,7 +3216,7 @@ RETRY_IIS:
                     string newFileName = $"{Path.GetFileNameWithoutExtension(jsFile)}_{flag}{extension}";
                     string newPath = Path.Combine(Path.GetDirectoryName(jsFile), newFileName);
                     File.Copy(jsFile, newPath, true);
-                    fileNames[jsFile] = newPath;                    
+                    fileNames[jsFile] = newPath;
                 }
                 nlog.Info($"共有{fileNames.Count}个js或css文件重命名");
                 if (fileNames.Count <= 0) return;
@@ -3407,7 +3414,7 @@ RETRY_IIS:
             }
         }
 
-        private void DoSelectDeployIIS(List<string> fileList, string publishPath, List<Server> serverList, List<string> backUpIgnoreList, 
+        private void DoSelectDeployIIS(List<string> fileList, string publishPath, List<Server> serverList, List<string> backUpIgnoreList,
             string Port, string PoolName, string PhysicalPath, bool alwaysRun, GitClient gitModel, string remark, List<string> ignoreList)
         {
             try
@@ -3438,7 +3445,7 @@ RETRY_IIS:
                         this.RenameJsCss(fileList, dateTimeFolderNameParent, this.nlog_iis);
                         this.nlog_iis.Info("替换html页面中引用js或css文件随机数");
                         this.ReplaceJsCssRandom(fileList, dateTimeFolderNameParent, this.nlog_iis);
-                        
+
                         byte[] zipBytes = null;
                         //List<string> ignoreList = new List<string>();
                         try
@@ -3472,10 +3479,10 @@ RETRY_IIS:
                         this.nlog_iis.Info($"package success,package size:{(packageSize > 0 ? (packageSize + "") : "<1")}M");
                         var loggerId = Guid.NewGuid().ToString("N");
                         //执行 上传
-                        this.nlog_iis.Info("-----------------Deploy Start-----------------");                        
+                        this.nlog_iis.Info("-----------------Deploy Start-----------------");
                         var allfailServerList = new List<Server>();
                         var retryTimes = 0;
-RETRY_IIS2:
+                    RETRY_IIS2:
                         if (stop_iis_cancel_token)
                         {
                             this.nlog_iis.Warn($"deploy task was canceled!");
@@ -3524,7 +3531,9 @@ RETRY_IIS2:
                                 continue;
                             }
 
-
+                            #region 网站是否存在
+                            //
+                            #endregion
 
                             this.nlog_iis.Info("Start Check Website IsExist In Remote IIS:" + server.Host);
                             var checkIisResult = await WebUtil.HttpPostAsync<IIsSiteCheck>(
@@ -3591,6 +3600,7 @@ RETRY_IIS2:
                             httpRequestClient.SetFieldValue("deployFolderName", dateTimeFolderName);
                             httpRequestClient.SetFieldValue("useTempPhysicalPath", PluginConfig.IISEnableNotStopSiteDeploy ? "true" : "");
                             httpRequestClient.SetFieldValue("useOfflineHtm", PluginConfig.IISEnableUseOfflineHtm ? "true" : "");
+                            httpRequestClient.SetFieldValue("isBackup", PluginConfig.IISEnableBackup ? "true" : "false");
                             httpRequestClient.SetFieldValue("Token", server.Token);
                             httpRequestClient.SetFieldValue("backUpIgnore", (backUpIgnoreList != null && backUpIgnoreList.Any()) ? string.Join("@_@", backUpIgnoreList) : "");
                             httpRequestClient.SetFieldValue("publish", "publish.zip", "application/octet-stream", zipBytes);
@@ -4166,8 +4176,9 @@ RETRY_IIS2:
                     btn_iis_stop.Visible = !flag;//是否展示停止按钮
                 }
 
-                this.checkBox_Increment_iis.Enabled = flag;
+                //this.checkBox_Increment_iis.Enabled = flag;
                 this.checkBox_iis_use_offlinehtm.Enabled = flag;
+                this.checkBox_iis_backup.Enabled = flag;
                 this.txt_iis_web_site_name.Enabled = flag;
                 this.checkBox_iis_restart_site.Enabled = flag;
                 this.combo_iis_env.Enabled = flag;
@@ -4484,6 +4495,10 @@ RETRY_IIS2:
         {
             PluginConfig.IISEnableUseOfflineHtm = checkBox_iis_use_offlinehtm.Checked;
         }
+        private void checkBox_iis_backup_Click(object sender, EventArgs e)
+        {
+            PluginConfig.IISEnableBackup = checkBox_iis_backup.Checked;
+        }
         private void checkBox_iis_rename_jsdir_Click(object sender, EventArgs e)
         {
             PluginConfig.IISEnableRenameJsDir = this.checkBox_iis_rename_jsdir.Checked;
@@ -4778,7 +4793,7 @@ RETRY_IIS2:
                     }
                 }
                 this.b_windows_service_rollback.Enabled = flag;
-                this.checkBox_Increment_window_service.Enabled = flag;
+                //this.checkBox_Increment_window_service.Enabled = flag;
                 this.b_windowservice_deploy.Enabled = flag;
                 if (!ignore)
                 {
@@ -4794,7 +4809,8 @@ RETRY_IIS2:
                 this.page_web_iis.Enabled = flag;
                 this.pag_advance_setting.Enabled = flag;
                 this.page_docker_img.Enabled = flag;
-                checkBox_select_deploy_service.Enabled = flag;
+                this.checkBox_select_deploy_service.Enabled = flag;
+                this.checkBox_backup_windows_server.Enabled = flag;
                 if (flag)
                 {
                     this.rich_iis_log.Text = "";
@@ -4847,7 +4863,7 @@ RETRY_IIS2:
                     }
                 }
                 this.b_linux_service_rollback.Enabled = flag;
-                this.checkBox_Increment_linux_service.Enabled = flag;
+                //this.checkBox_Increment_linux_service.Enabled = flag;
                 this.b_linuxservice_deploy.Enabled = flag;
                 if (!ignore)
                 {
@@ -4863,8 +4879,9 @@ RETRY_IIS2:
                 this.page_window_service.Enabled = flag;
                 this.pag_advance_setting.Enabled = flag;
                 this.page_docker_img.Enabled = flag;
-                checkBox_select_deploy_linuxservice.Enabled = flag;
-                checkBox_select_type_linuxservice.Enabled = flag;
+                this.checkBox_select_deploy_linuxservice.Enabled = flag;
+                this.checkBox_select_type_linuxservice.Enabled = flag;
+                this.checkBox_backup_linux_service.Enabled = flag;
                 if (flag)
                 {
                     this.rich_iis_log.Text = "";
@@ -4906,7 +4923,7 @@ RETRY_IIS2:
         {
             stop_windows_cancel_token = false;
             Condition = new AutoResetEvent(false);
-            
+
 
             var sdkTypeName = this.combo_windowservice_sdk_type.SelectedItem as string;
             if (string.IsNullOrWhiteSpace(sdkTypeName))
@@ -5131,7 +5148,7 @@ RETRY_IIS2:
                         if (isNetcore)
                         {
                             var runtime = "";
-                            if (string.IsNullOrEmpty(PluginConfig.NetCorePublishMode) || PluginConfig.NetCorePublishMode=="Default")
+                            if (string.IsNullOrEmpty(PluginConfig.NetCorePublishMode) || PluginConfig.NetCorePublishMode == "Default")
                             {
                                 runtime = " --runtime win-x64";
                             }
@@ -5360,7 +5377,7 @@ RETRY_IIS2:
                     dateTimeFolderNameParent = DateTime.Now.ToString("yyyyMMddHHmmss");
                     var retryTimes = 0;
                     var allfailServerList = new List<Server>();
-RETRY_WINDOWSSERVICE:
+                RETRY_WINDOWSSERVICE:
                     var failServerList = new List<Server>();
                     var index = 0;
                     var allSuccess = true;
@@ -5517,6 +5534,7 @@ RETRY_WINDOWSSERVICE:
                         httpRequestClient.SetFieldValue("serviceName", serviceName);
                         httpRequestClient.SetFieldValue("id", loggerId);
                         httpRequestClient.SetFieldValue("sdkType", DeployConfig.WindowsServiveConfig.SdkType);
+                        httpRequestClient.SetFieldValue("isBackup", PluginConfig.WindowsServiceEnableBackup ? "true" : "false");
                         httpRequestClient.SetFieldValue("isProjectInstallService",
                             isProjectInstallService ? "yes" : "no");
                         httpRequestClient.SetFieldValue("execFilePath", execFilePath);
@@ -5730,12 +5748,12 @@ RETRY_WINDOWSSERVICE:
         }
 
 
-        private void DoWindowsServiceSelectDeploy(List<string> fileList, string publishPath, List<Server> serverList, string serviceName, bool isProjectInstallService, 
+        private void DoWindowsServiceSelectDeploy(List<string> fileList, string publishPath, List<Server> serverList, string serviceName, bool isProjectInstallService,
             string execFilePath, string PhysicalPath, List<string> backUpIgnoreList, GitClient gitModel, string remark, List<string> ignoreList)
         {
             new Task(async () =>
             {
-                var dateTimeFolderNameParent = string.Empty;
+                var dateTimeFolderNameParent = DateTime.Now.ToString("yyyyMMddHHmmss");
                 try
                 {
                     if (stop_windows_cancel_token)
@@ -5779,15 +5797,19 @@ RETRY_WINDOWSSERVICE:
                         PackageError(this.tabPage_windows_service, serverList.First().Host);
                         return;
                     }
+
+                    //本地保存压缩包
+                    this.SavePublishZipFile(zipBytes, publishPath, dateTimeFolderNameParent, this.nlog_windowservice);
+
                     var packageSize = (zipBytes.Length / 1024 / 1024);
                     this.nlog_windowservice.Info($"package success,package size:{(packageSize > 0 ? (packageSize + "") : "<1")}M");
                     var loggerId = Guid.NewGuid().ToString("N");
                     //执行 上传
                     this.nlog_windowservice.Info("-----------------Deploy Start-----------------");
-                    dateTimeFolderNameParent = DateTime.Now.ToString("yyyyMMddHHmmss");
+                    //dateTimeFolderNameParent = DateTime.Now.ToString("yyyyMMddHHmmss");
                     var retryTimes = 0;
                     var allfailServerList = new List<Server>();
-RETRY_WINDOWSSERVICE2:
+                RETRY_WINDOWSSERVICE2:
                     var failServerList = new List<Server>();
                     var index = 0;
                     var allSuccess = true;
@@ -5829,21 +5851,137 @@ RETRY_WINDOWSSERVICE2:
                             continue;
                         }
 
+                        #region 是否已经存在service
+
+                        string ServiceDescription = "";
+                        string ServiceStartType = "";
+                        var isOldAgent = false;
+                        this.nlog_windowservice.Info("Start Check Windows Service IsExist In Remote Server:" + server.Host);
+                        var checkResult = await WebUtil.HttpPostAsync<IIsSiteCheck>(
+                            $"http://{server.Host}/version", new
+                            {
+                                Token = server.Token,
+                                Type = "checkwinservice",
+                                Mac = CodingHelper.GetMacAddress(),
+                                Name = serviceName
+                            }, nlog_windowservice, true);
+
+                        var isAgentUpdate = serviceName.ToLower().Equals("antdeployagentwindowsservice");
+                        if (checkResult == null || checkResult.Data == null)
+                        {
+                            if (isAgentUpdate)
+                            {
+                                isOldAgent = true;
+                            }
+                            else
+                            {
+                                this.nlog_windowservice.Error($"Check IsExist In Remote Server Fail!");
+                                UploadError(this.tabPage_windows_service, server.Host);
+                                allSuccess = false;
+                                failCount++;
+                                failServerList.Add(server);
+                                continue;
+                            }
+                        }
+
+
+                        if (!isOldAgent && !string.IsNullOrEmpty(checkResult.Msg))
+                        {
+                            this.nlog_windowservice.Error($"Check IsExist In Remote Server Fail：" + checkResult.Msg);
+                            UploadError(this.tabPage_windows_service, server.Host);
+                            allSuccess = false;
+                            failCount++;
+                            failServerList.Add(server);
+                            continue;
+                        }
+
+                        if (isOldAgent)
+                        {
+                            //兼容老的Agent版本
+                            this.nlog_windowservice.Warn($"【Server】Agent version is old,please update agent version to:{Vsix.AGENTVERSION}！");
+                        }
+                        else if (checkResult.Data.Success)
+                        {
+                            this.nlog_windowservice.Info($"Windows Service Is Exist In Remote Server:" + server.Host);
+                        }
+                        else
+                        {
+                            if (this.PluginConfig.WindowsServiceEnableIncrement)
+                            {
+                                this.nlog_windowservice.Error($"Windows Service Is Not Exist In Remote Server,Can not use [Increment deplpoy]");
+                                UploadError(this.tabPage_windows_service, server.Host);
+                                allSuccess = false;
+                                failCount++;
+                                failServerList.Add(server);
+                                continue;
+                            }
+                            else if (isAgentUpdate)
+                            {
+                                this.nlog_windowservice.Error($"Agent Service Is Not Exist In Remote Server,Can not update！");
+                                UploadError(this.tabPage_windows_service, server.Host);
+                                allSuccess = false;
+                                failCount++;
+                                failServerList.Add(server);
+                                continue;
+                            }
+
+                            this.BeginInvokeLambda(() =>
+                            {
+                                //级别一不存在
+                                FirstService creatFrom = new FirstService();
+                                var data = creatFrom.ShowDialog();
+                                if (data == DialogResult.Cancel)
+                                {
+                                    _CreateParam = null;
+                                }
+                                else
+                                {
+                                    _CreateParam = creatFrom.WindowsServiceCreateParam;
+                                }
+                                Condition.Set();
+                            });
+                            Condition.WaitOne();
+
+                            if (_CreateParam == null)
+                            {
+                                this.nlog_windowservice.Error($"Create Windows Service Param Required!");
+                                UploadError(this.tabPage_windows_service, server.Host);
+                                allSuccess = false;
+                                failCount++;
+                                failServerList.Add(server);
+                                continue;
+                            }
+                            else
+                            {
+                                ServiceStartType = _CreateParam.StartUp;
+                                PhysicalPath = _CreateParam.PhysicalPath;
+                                ServiceDescription = _CreateParam.Desc;
+                                this.nlog_windowservice.Info($"WindowsService Create Description:{_CreateParam.Desc},StartType:{_CreateParam.StartUp},PhysicalPath:{PhysicalPath}");
+                            }
+                        }
+
+                        #endregion
 
                         ProgressPercentageForWindowsService = 0;
                         ProgressCurrentHostForWindowsService = server.Host;
                         this.nlog_windowservice.Info($"Start Uppload,Host:{getHostDisplayName(server)}");
                         HttpRequestClient httpRequestClient = new HttpRequestClient();
                         httpRequestClient.SetFieldValue("publishType", "windowservice");
-                        httpRequestClient.SetFieldValue("isIncrement", "true");
+                        //httpRequestClient.SetFieldValue("isIncrement", "true");
+                        httpRequestClient.SetFieldValue("isIncrement", this.PluginConfig.WindowsServiceEnableIncrement ? "true" : "");
                         httpRequestClient.SetFieldValue("serviceName", serviceName);
                         httpRequestClient.SetFieldValue("id", loggerId);
                         httpRequestClient.SetFieldValue("sdkType", DeployConfig.WindowsServiveConfig.SdkType);
+                        httpRequestClient.SetFieldValue("isBackup", PluginConfig.WindowsServiceEnableBackup ? "true" : "false");
                         httpRequestClient.SetFieldValue("isProjectInstallService",
                             isProjectInstallService ? "yes" : "no");
                         httpRequestClient.SetFieldValue("execFilePath", execFilePath);
                         httpRequestClient.SetFieldValue("deployFolderName", dateTimeFolderName);
                         httpRequestClient.SetFieldValue("physicalPath", PhysicalPath);
+                        httpRequestClient.SetFieldValue("startType", ServiceStartType);
+                        httpRequestClient.SetFieldValue("desc", ServiceDescription);
+                        httpRequestClient.SetFieldValue("useNssm", _CreateParam != null ? _CreateParam.useNssm : "");
+                        httpRequestClient.SetFieldValue("param", _CreateParam != null ? _CreateParam.Param : "");
                         httpRequestClient.SetFieldValue("Token", server.Token);
                         httpRequestClient.SetFieldValue("remark", remark);
                         httpRequestClient.SetFieldValue("mac", CodingHelper.GetMacAddress());
@@ -6587,32 +6725,50 @@ RETRY_WINDOWSSERVICE2:
                 return;
             }
 
-            var old_ProjectConfigPath = Path.Combine(ProjectFolderPath, "AntDeploy.json");
-            var antdeployJsonInProjectPath = old_ProjectConfigPath;
+            //var old_ProjectConfigPath = Path.Combine(ProjectFolderPath, "AntDeploy.json");
+            //var antdeployJsonInProjectPath = old_ProjectConfigPath;
             string rootPath = Path.GetDirectoryName(ProjectFolderPath.TrimEnd('\\'));
             string dirName = ProjectFolderPath.Substring(rootPath.Length).Trim('\\');
-            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData); //其他文件不要写入发布文件夹
-            string newDir = Path.Combine(appDataPath, "AntDeploy", $"{dirName}_config");
+            //string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData); //其他文件不要写入发布文件夹
+            string appDataPath = AppDomain.CurrentDomain.BaseDirectory;
+            string newDir = Path.Combine(appDataPath, "AntDeployConfig", $"{dirName}_config");
             if (!Directory.Exists(newDir))
             {
                 Directory.CreateDirectory(newDir);
             }
-            var new_ProjectConfigPath = Path.Combine(newDir, "AntDeploy.json");
-            //AntDeploy.json发布配置文件与发布文件隔离开 兼容老的配置文件第一次默认转移
-            if (File.Exists(old_ProjectConfigPath) && !File.Exists(new_ProjectConfigPath))
+            var new_ProjectConfigPath = Path.Combine(newDir, "DeployConfig.json");
+
+            //复制用户目录下的配置文件
+            string tempDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData); //其他文件不要写入发布文件夹
+            string tempDir = Path.Combine(tempDataPath, "AntDeploy", $"{dirName}_config");
+            if (!Directory.Exists(tempDir))
             {
-                File.Copy(old_ProjectConfigPath, new_ProjectConfigPath, false);
+                Directory.CreateDirectory(tempDir);
             }
+            string tempFile = Path.Combine(tempDir, "AntDeploy.json");
+            if (!File.Exists(new_ProjectConfigPath))
+            {
+                if (File.Exists(tempFile))
+                {
+                    File.Copy(tempFile, new_ProjectConfigPath, true);
+                }
+            }
+            //AntDeploy.json发布配置文件与发布文件隔离开 兼容老的配置文件第一次默认转移
+            //if (File.Exists(old_ProjectConfigPath) && !File.Exists(new_ProjectConfigPath))
+            //{
+            //    File.Copy(old_ProjectConfigPath, new_ProjectConfigPath, false);
+            //}
 
             if (File.Exists(new_ProjectConfigPath))
             {
-                var useAntJsonInProjectPath = GlobalConfig.EnableAntDeployJson && File.Exists(old_ProjectConfigPath);
-                var config = useAntJsonInProjectPath ? File.ReadAllText(old_ProjectConfigPath, Encoding.UTF8): File.ReadAllText(new_ProjectConfigPath, Encoding.UTF8);
-                if (useAntJsonInProjectPath)
-                {
-                    // 强制使用项目文件夹下的AntDeploy.json
-                    File.Copy(old_ProjectConfigPath, new_ProjectConfigPath, true);
-                }
+                //var useAntJsonInProjectPath = GlobalConfig.EnableAntDeployJson && File.Exists(old_ProjectConfigPath);
+                //var config = useAntJsonInProjectPath ? File.ReadAllText(old_ProjectConfigPath, Encoding.UTF8) : File.ReadAllText(new_ProjectConfigPath, Encoding.UTF8);
+                //if (useAntJsonInProjectPath)
+                //{
+                //    // 强制使用项目文件夹下的AntDeploy.json
+                //    File.Copy(old_ProjectConfigPath, new_ProjectConfigPath, true);
+                //}
+                var config = File.ReadAllText(new_ProjectConfigPath, Encoding.UTF8);
                 if (!string.IsNullOrEmpty(config))
                 {
                     DeployConfig = JsonConvert.DeserializeObject<DeployConfig>(config);
@@ -6632,7 +6788,7 @@ RETRY_WINDOWSSERVICE2:
                 }
             }
 
-            ProjectConfigPath = new Tuple<string, string>(new_ProjectConfigPath, antdeployJsonInProjectPath);
+            ProjectConfigPath = new Tuple<string, string>(new_ProjectConfigPath, tempFile);
         }
 
         private void ReadPluginConfig(string projectPath)
@@ -6770,6 +6926,11 @@ RETRY_WINDOWSSERVICE2:
             //    checkBox_Increment_window_service.Checked = false;
             //    PluginConfig.WindowsServiceEnableIncrement = false;
             //}
+        }
+
+        private void checkBox_backup_windows_server_Click(object sender, EventArgs e)
+        {
+            PluginConfig.WindowsServiceEnableBackup = checkBox_backup_windows_server.Checked;
         }
         #endregion
 
@@ -6930,7 +7091,7 @@ RETRY_WINDOWSSERVICE2:
             if (string.IsNullOrEmpty(PluginConfig.DeployFolderPath) && !ProjectHelper.CheckDockerFileIsSetCopy(ProjectPath))
             {
                 var confirmDockerfile = ShowInputMsgBox(Strings.DockerFileWarn,
-                    Strings.DockerFileNotSetCopy,"hide" );
+                    Strings.DockerFileNotSetCopy, "hide");
                 if (!confirmDockerfile.Item1)
                 {
                     return;
@@ -7242,7 +7403,7 @@ RETRY_WINDOWSSERVICE2:
                    var clientDateTimeFolderName = string.Empty;
                    var retryTimes = 0;
                    var allfailServerList = new List<BaseServer>();
-RETRY_DOCKER:
+               RETRY_DOCKER:
                    var failServerList = new List<BaseServer>();
                    var index = 0;
                    var allSuccess = true;
@@ -7447,7 +7608,7 @@ RETRY_DOCKER:
                                }
                            }
                        }
-                       else if(server is Server tokenServer)
+                       else if (server is Server tokenServer)
                        {
                            if (string.IsNullOrEmpty(tokenServer.Token))
                            {
@@ -7459,7 +7620,8 @@ RETRY_DOCKER:
                                continue;
                            }
 
-                           var obj = new {
+                           var obj = new
+                           {
                                NetCoreENTRYPOINT = ENTRYPOINT,
                                NetCoreVersion = SDKVersion,
                                NetCorePort = DeployConfig.DockerConfig.Prot,
@@ -7483,11 +7645,11 @@ RETRY_DOCKER:
                            };
 
                            ProgressPercentageForWindowsService = 0;
-                           ProgressCurrentHostForWindowsService=server.Host;
+                           ProgressCurrentHostForWindowsService = server.Host;
                            HttpRequestClient httpRequestClient = new HttpRequestClient();
                            httpRequestClient.SetFieldValue("publishType", "docker");
                            httpRequestClient.SetFieldValue("isIncrement", this.PluginConfig.DockerEnableIncrement ? "true" : "");
-                           httpRequestClient.SetFieldValue("serviceName", ENTRYPOINT.Replace(".dll",""));
+                           httpRequestClient.SetFieldValue("serviceName", ENTRYPOINT.Replace(".dll", ""));
                            httpRequestClient.SetFieldValue("id", loggerId);
                            httpRequestClient.SetFieldValue("remark", confirmResult.Item2);
                            httpRequestClient.SetFieldValue("mac", CodingHelper.GetMacAddress());
@@ -7497,7 +7659,7 @@ RETRY_DOCKER:
                            httpRequestClient.SetFieldValue("Token", tokenServer.Token);
                            httpRequestClient.SetFieldValue("param", JsonConvert.SerializeObject(obj));
                            httpRequestClient.SetFieldValue("backUpIgnore", (backUpIgnoreList != null && backUpIgnoreList.Any()) ? string.Join("@_@", backUpIgnoreList) : "");
-                           httpRequestClient.SetFieldValue("publish", "publish.zip", "application/octet-stream",bytesall);
+                           httpRequestClient.SetFieldValue("publish", "publish.zip", "application/octet-stream", bytesall);
                            HttpLogger HttpLogger = new HttpLogger
                            {
                                Key = loggerId,
@@ -7527,8 +7689,8 @@ RETRY_DOCKER:
                                            .FromEventPattern<UploadProgressChangedEventArgs>(client, "UploadProgressChanged")
                                            .Sample(TimeSpan.FromMilliseconds(100))
                                            .Subscribe(arg => { ClientOnUploadProgressChanged2(arg.Sender, arg.EventArgs); });
-                                    //client.UploadProgressChanged += ClientOnUploadProgressChanged2;
-                                });
+                                       //client.UploadProgressChanged += ClientOnUploadProgressChanged2;
+                                   });
                                if (ProgressPercentageForWindowsService == 0 && !uploadResult.Item1) UploadError(this.tabPage_docker, server.Host);
                                if ((ProgressPercentageForWindowsService > 0 && ProgressPercentageForWindowsService < 100))
                                    UpdateUploadProgress(this.tabPage_docker, ProgressCurrentHostForWindowsService, 100); //结束上传
@@ -7588,7 +7750,7 @@ RETRY_DOCKER:
                                    }
                                }
                            }
-                           catch(Exception e1)
+                           catch (Exception e1)
                            {
                                allSuccess = false;
                                failCount++;
@@ -7766,7 +7928,7 @@ RETRY_DOCKER:
                         UpdatePackageProgress(this.tabPage_docker, server2.Host, 100);
                         UpdateUploadProgress(this.tabPage_docker, server2.Host, 100);
 
-                        if(server2 is LinuxServer server)
+                        if (server2 is LinuxServer server)
                         {
                             #region 参数Check
 
@@ -7977,7 +8139,7 @@ RETRY_DOCKER:
                                 }
                             }
                         }
-                        else if(server2 is Server tokenServer)
+                        else if (server2 is Server tokenServer)
                         {
                             if (string.IsNullOrEmpty(tokenServer.Token))
                             {
@@ -8006,7 +8168,7 @@ RETRY_DOCKER:
                                Token = tokenServer.Token,
                                Type = "docker",
                                Mac = CodingHelper.GetMacAddress(),
-                               Name = ENTRYPOINT.Replace(".dll",""),
+                               Name = ENTRYPOINT.Replace(".dll", ""),
                                WithArgs = true
                            }, nlog_docker);
 
@@ -8075,7 +8237,7 @@ RETRY_DOCKER:
                             HttpRequestClient httpRequestClient = new HttpRequestClient();
                             httpRequestClient.SetFieldValue("publishType", "docker_rollback");
                             httpRequestClient.SetFieldValue("id", loggerId);
-                            httpRequestClient.SetFieldValue("serviceName", ENTRYPOINT.Replace(".dll",""));
+                            httpRequestClient.SetFieldValue("serviceName", ENTRYPOINT.Replace(".dll", ""));
                             httpRequestClient.SetFieldValue("deployFolderName", _rollBackVersion.Version);
                             httpRequestClient.SetFieldValue("Token", tokenServer.Token);
                             HttpLogger HttpLogger = new HttpLogger
@@ -8406,13 +8568,13 @@ RETRY_DOCKER:
                 log.Info("Visual Studio Version : " + vsVersion);
             }
 
-            if (ProjectConfigPath!=null)
+            if (ProjectConfigPath != null)
             {
                 var fileInfo = new FileInfo(GlobalConfig.EnableAntDeployJson ? ProjectConfigPath.Item2 : ProjectConfigPath.Item1);
                 if (fileInfo.Exists && !string.IsNullOrEmpty(fileInfo.FullName))
                 {
                     LogEventInfo publisEvent = new LogEventInfo(LogLevel.Info, "", "【AntDeploy.json】 ");
-                    publisEvent.Properties["ShowLink"] = "file://" + fileInfo.FullName.Replace("\\", "\\\\") ;
+                    publisEvent.Properties["ShowLink"] = "file://" + fileInfo.FullName.Replace("\\", "\\\\");
                     publisEvent.LoggerName = log.Name;
                     log.Log(publisEvent);
                 }
@@ -8440,12 +8602,12 @@ RETRY_DOCKER:
 
         #endregion
 
-        private void Deploy_HelpButtonClicked(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            e.Cancel = true;
-            About about = new About();
-            about.ShowDialog();
-        }
+        //private void Deploy_HelpButtonClicked(object sender, System.ComponentModel.CancelEventArgs e)
+        //{
+        //    e.Cancel = true;
+        //    About about = new About();
+        //    about.ShowDialog();
+        //}
 
         private void b_copy_pack_ignore_Click(object sender, EventArgs e)
         {
@@ -8692,11 +8854,11 @@ RETRY_DOCKER:
             PluginConfig.DeployFolderPath = string.Empty;
         }
 
-        private void btn_shang_Click(object sender, EventArgs e)
-        {
-            About about = new About();
-            about.ShowDialog();
-        }
+        //private void btn_shang_Click(object sender, EventArgs e)
+        //{
+        //    About about = new About();
+        //    about.ShowDialog();
+        //}
 
         private void CheckIsDockerSpecialFolderDeploy()
         {
@@ -8771,7 +8933,7 @@ RETRY_DOCKER:
                         return;
                     }
 
-                     pwd = CodingHelper.AESDecrypt(server2.Pwd);
+                    pwd = CodingHelper.AESDecrypt(server2.Pwd);
                     if (string.IsNullOrEmpty(pwd))
                     {
                         MessageBoxEx.Show(this, "Server Pwd is Empty!");
@@ -8779,7 +8941,7 @@ RETRY_DOCKER:
                     }
                     #endregion
                 }
-                else if(Server is Server tokenServer)
+                else if (Server is Server tokenServer)
                 {
                     if (string.IsNullOrEmpty(tokenServer.Host))
                     {
@@ -8829,7 +8991,7 @@ RETRY_DOCKER:
                                     ShowThreadMessageBox("get history list fail");
                                     return;
                                 }
-                                versionList = sshClient.GetDeployHistory( 10);
+                                versionList = sshClient.GetDeployHistory(10);
                             }
 
                             if (versionList == null || versionList.Item2.Count < 1)
@@ -8876,7 +9038,7 @@ RETRY_DOCKER:
                 MessageBoxEx.Show(this, "ServiceName is not correct!");
                 return;
             }
-            if(ServerType == ServerType.DOCKER && string.IsNullOrEmpty(ENTRYPOINTDOCKER))
+            if (ServerType == ServerType.DOCKER && string.IsNullOrEmpty(ENTRYPOINTDOCKER))
             {
                 MessageBoxEx.Show(this, "ProjectName is not correct!");
                 return;
@@ -8928,10 +9090,10 @@ RETRY_DOCKER:
                         {
                             Token = server.Token,
                             Mac = CodingHelper.GetMacAddress(),
-                            Type = ServerType == ServerType.LINUXSERVICE ? "linux" : ServerType == ServerType.IIS ? "iis" : ServerType == ServerType.DOCKER ? "docker":"winservice",
-                            Name =!string.IsNullOrEmpty(ENTRYPOINTDOCKER) ? ENTRYPOINTDOCKER :  ServerType == ServerType.LINUXSERVICE ? DeployConfig.LinuxServiveConfig.ServiceName : ServerType == ServerType.IIS ? DeployConfig.IIsConfig.WebSiteName : DeployConfig.WindowsServiveConfig.ServiceName,
+                            Type = ServerType == ServerType.LINUXSERVICE ? "linux" : ServerType == ServerType.IIS ? "iis" : ServerType == ServerType.DOCKER ? "docker" : "winservice",
+                            Name = !string.IsNullOrEmpty(ENTRYPOINTDOCKER) ? ENTRYPOINTDOCKER : ServerType == ServerType.LINUXSERVICE ? DeployConfig.LinuxServiveConfig.ServiceName : ServerType == ServerType.IIS ? DeployConfig.IIsConfig.WebSiteName : DeployConfig.WindowsServiveConfig.ServiceName,
                             WithArgs = true
-                        }, ServerType == ServerType.LINUXSERVICE ? nlog_linux : ServerType == ServerType.IIS ? nlog_iis : ServerType == ServerType.DOCKER ? nlog_docker :nlog_windowservice);
+                        }, ServerType == ServerType.LINUXSERVICE ? nlog_linux : ServerType == ServerType.IIS ? nlog_iis : ServerType == ServerType.DOCKER ? nlog_docker : nlog_windowservice);
 
                     if (getVersionResult == null)
                     {
@@ -8967,7 +9129,7 @@ RETRY_DOCKER:
                     {
                         EnableForLinuxService(true);
                     }
-                    else if(ServerType == ServerType.DOCKER)
+                    else if (ServerType == ServerType.DOCKER)
                     {
                         EnableForDocker(true);
                     }
@@ -9066,6 +9228,10 @@ RETRY_DOCKER:
         private void checkBox_select_type_linuxservice_CheckedChanged(object sender, EventArgs e)
         {
             PluginConfig.LinuxServiceNotifySystemd = checkBox_select_type_linuxservice.Checked;
+        }
+        private void checkBox_backup_linux_service_CheckedChanged(object sender, EventArgs e)
+        {
+            PluginConfig.LinuxServiceEnableBackup = checkBox_backup_linux_service.Checked;
         }
         private void btn_linux_service_retry_Click(object sender, EventArgs e)
         {
@@ -9504,7 +9670,7 @@ RETRY_DOCKER:
                     if (string.IsNullOrEmpty(PluginConfig.DeployFolderPath))
                     {
                         var path = publishPath + "\\";
-                        
+
                         if (string.IsNullOrEmpty(PluginConfig.NetCorePublishMode) || PluginConfig.NetCorePublishMode == "Default")
                         {
                             runtime = " --runtime linux-x64";
@@ -9679,7 +9845,7 @@ RETRY_DOCKER:
                     dateTimeFolderNameParent = DateTime.Now.ToString("yyyyMMddHHmmss");
                     var retryTimes = 0;
                     var allfailServerList = new List<Server>();
-RETRY_WINDOWSSERVICE:
+                RETRY_WINDOWSSERVICE:
                     var failServerList = new List<Server>();
                     var index = 0;
                     var allSuccess = true;
@@ -9819,6 +9985,7 @@ RETRY_WINDOWSSERVICE:
                         httpRequestClient.SetFieldValue("localIp", CodingHelper.GetLocalIPAddress());
                         httpRequestClient.SetFieldValue("deployFolderName", dateTimeFolderName);
                         httpRequestClient.SetFieldValue("notify", this.PluginConfig.LinuxServiceNotifySystemd ? "true" : "");
+                        httpRequestClient.SetFieldValue("isBackup", PluginConfig.LinuxServiceEnableBackup ? "true" : "false");
                         httpRequestClient.SetFieldValue("physicalPath", PhysicalPath);
                         httpRequestClient.SetFieldValue("env", DeployConfig.LinuxServiveConfig.EnvParam);
                         httpRequestClient.SetFieldValue("useDotnet", !useDotnet ? "true" : "");//true 代表需要 服务器上用dotnet xxx.dll的方式启动服务
@@ -10001,12 +10168,12 @@ RETRY_WINDOWSSERVICE:
         }
 
 
-        private void DoLinuxServiceSelectDeploy(List<string> fileList, string publishPath, List<Server> serverList, string serviceName, string envParam, bool useDotnet, 
+        private void DoLinuxServiceSelectDeploy(List<string> fileList, string publishPath, List<Server> serverList, string serviceName, string envParam, bool useDotnet,
             string execFilePath, string PhysicalPath, List<string> backUpIgnoreList, GitClient gitModel, string remark, List<string> ignoreList)
         {
             new Task(async () =>
             {
-                var dateTimeFolderNameParent = string.Empty;
+                var dateTimeFolderNameParent = DateTime.Now.ToString("yyyyMMddHHmmss");
                 try
                 {
                     if (stop_linux_cancel_token)
@@ -10050,15 +10217,19 @@ RETRY_WINDOWSSERVICE:
                         PackageError(this.tabPage_linux_service, serverList.First().Host);
                         return;
                     }
+
+                    //本地保存压缩包
+                    this.SavePublishZipFile(zipBytes, publishPath, dateTimeFolderNameParent, this.nlog_linux);
+
                     var packageSize = (zipBytes.Length / 1024 / 1024);
                     this.nlog_linux.Info($"package success,package size:{(packageSize > 0 ? (packageSize + "") : "<1")}M");
                     var loggerId = Guid.NewGuid().ToString("N");
                     //执行 上传
                     this.nlog_linux.Info("-----------------Deploy Start-----------------");
-                    dateTimeFolderNameParent = DateTime.Now.ToString("yyyyMMddHHmmss");
+                    //dateTimeFolderNameParent = DateTime.Now.ToString("yyyyMMddHHmmss");
                     var retryTimes = 0;
                     var allfailServerList = new List<Server>();
-RETRY_WINDOWSSERVICE2:
+                RETRY_WINDOWSSERVICE2:
                     var failServerList = new List<Server>();
                     var index = 0;
                     var allSuccess = true;
@@ -10100,23 +10271,113 @@ RETRY_WINDOWSSERVICE2:
                             continue;
                         }
 
+                        #region 服务是否存在
+                        string ServiceStartType = "";
+                        string ServiceDescription = "";
+                        this.nlog_linux.Info("Start Check Linux Service IsExist In Remote Server:" + server.Host);
+                        var checkResult = await WebUtil.HttpPostAsync<IIsSiteCheck>(
+                            $"http://{server.Host}/version", new
+                            {
+                                Token = server.Token,
+                                Type = "checklinux",
+                                Mac = CodingHelper.GetMacAddress(),
+                                Name = serviceName
+                            }, nlog_linux, true);
+
+
+                        if (checkResult == null || checkResult.Data == null)
+                        {
+                            this.nlog_linux.Error($"Check IsExist In Remote Server Fail!");
+                            UploadError(this.tabPage_linux_service, server.Host);
+                            allSuccess = false;
+                            failCount++;
+                            failServerList.Add(server);
+                            continue;
+                        }
+
+                        if (!string.IsNullOrEmpty(checkResult.Msg))
+                        {
+                            this.nlog_linux.Error($"Check IsExist In Remote Server Fail：" + checkResult.Msg);
+                            UploadError(this.tabPage_linux_service, server.Host);
+                            allSuccess = false;
+                            failCount++;
+                            failServerList.Add(server);
+                            continue;
+                        }
+
+                        if (checkResult.Data.Success)
+                        {
+                            this.nlog_linux.Info($"Linux Service Is Exist In Remote Server:" + server.Host);
+                        }
+                        else
+                        {
+                            if (this.PluginConfig.LinuxServiceEnableIncrement)
+                            {
+                                this.nlog_linux.Error($"Linux Service Is Not Exist In Remote Server,Can not use [Increment deplpoy]");
+                                UploadError(this.tabPage_linux_service, server.Host);
+                                allSuccess = false;
+                                failCount++;
+                                failServerList.Add(server);
+                                continue;
+                            }
+
+                            this.BeginInvokeLambda(() =>
+                            {
+                                //级别一不存在
+                                FirstService creatFrom = new FirstService();
+                                var data = creatFrom.ShowDialog();
+                                if (data == DialogResult.Cancel)
+                                {
+                                    _CreateParam = null;
+                                }
+                                else
+                                {
+                                    _CreateParam = creatFrom.WindowsServiceCreateParam;
+                                }
+                                Condition.Set();
+                            });
+                            Condition.WaitOne();
+
+                            if (_CreateParam == null)
+                            {
+                                this.nlog_linux.Error($"Create Linux Service Param Required!");
+                                UploadError(this.tabPage_linux_service, server.Host);
+                                allSuccess = false;
+                                failCount++;
+                                failServerList.Add(server);
+                                continue;
+                            }
+                            else
+                            {
+                                ServiceStartType = _CreateParam.StartUp;
+                                PhysicalPath = _CreateParam.PhysicalPath;
+                                ServiceDescription = _CreateParam.Desc;
+                                this.nlog_linux.Info($"LinuxService Create Description:{_CreateParam.Desc},StartType:{_CreateParam.StartUp},PhysicalPath:{PhysicalPath}");
+                            }
+                        }
+
+                        #endregion
 
                         ProgressPercentageForLinuxService = 0;
                         ProgressCurrentHostForLinuxService = server.Host;
                         this.nlog_linux.Info($"Start Uppload,Host:{getHostDisplayName(server)}");
                         HttpRequestClient httpRequestClient = new HttpRequestClient();
                         httpRequestClient.SetFieldValue("publishType", "linux");
-                        httpRequestClient.SetFieldValue("isIncrement", "true");
+                        //httpRequestClient.SetFieldValue("isIncrement", "true");
+                        httpRequestClient.SetFieldValue("isIncrement", this.PluginConfig.LinuxServiceEnableIncrement ? "true" : "");
                         httpRequestClient.SetFieldValue("serviceName", serviceName);
                         httpRequestClient.SetFieldValue("id", loggerId);
                         httpRequestClient.SetFieldValue("execFilePath", execFilePath);
                         httpRequestClient.SetFieldValue("remark", remark);
                         httpRequestClient.SetFieldValue("notify", this.PluginConfig.LinuxServiceNotifySystemd ? "true" : "");
+                        httpRequestClient.SetFieldValue("isBackup", PluginConfig.LinuxServiceEnableBackup ? "true" : "false");
                         httpRequestClient.SetFieldValue("mac", CodingHelper.GetMacAddress());
                         httpRequestClient.SetFieldValue("pc", System.Environment.MachineName);
                         httpRequestClient.SetFieldValue("localIp", CodingHelper.GetLocalIPAddress());
                         httpRequestClient.SetFieldValue("deployFolderName", dateTimeFolderName);
                         httpRequestClient.SetFieldValue("physicalPath", PhysicalPath);
+                        httpRequestClient.SetFieldValue("startType", ServiceStartType);
+                        httpRequestClient.SetFieldValue("desc", ServiceDescription);
                         httpRequestClient.SetFieldValue("env", envParam);
                         httpRequestClient.SetFieldValue("useDotnet", !useDotnet ? "true" : "");//true 代表需要 服务器上用dotnet xxx.dll的方式启动服务
                         httpRequestClient.SetFieldValue("Token", server.Token);
@@ -10519,12 +10780,12 @@ RETRY_WINDOWSSERVICE2:
         {
             if (e.SysButton.Name == "btn_question")
             {
-                About about = new About();
-                about.ShowDialog();
+                //About about = new About();
+                //about.ShowDialog();
             }
             else if (e.SysButton.Name == "btn_open_new")
             {
-                this.Deploy_InitLoad(this.ProjectPath, new ProjectParam { OpenNewWindow = true}, false);
+                this.Deploy_InitLoad(this.ProjectPath, new ProjectParam { OpenNewWindow = true }, false);
                 this.combo_iis_env_SelectedIndexChanged(null, null);
             }
         }
@@ -10537,11 +10798,12 @@ RETRY_WINDOWSSERVICE2:
 
         private void saveAntDeployJson()
         {
-            if (!string.IsNullOrEmpty(ProjectConfigPath.Item1))
+            if (!string.IsNullOrEmpty(ProjectConfigPath?.Item1))
             {
                 var configJson = JsonConvert.SerializeObject(DeployConfig, Formatting.Indented);
                 File.WriteAllText(ProjectConfigPath.Item1, configJson, Encoding.UTF8);
-                if (GlobalConfig.EnableAntDeployJson && !string.IsNullOrEmpty(ProjectConfigPath.Item2)) File.WriteAllText(ProjectConfigPath.Item2, configJson, Encoding.UTF8);
+                if (GlobalConfig.EnableAntDeployJson && !string.IsNullOrEmpty(ProjectConfigPath.Item2))
+                    File.WriteAllText(ProjectConfigPath.Item2, configJson, Encoding.UTF8);
             }
         }
 

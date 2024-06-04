@@ -75,8 +75,8 @@ namespace AntDeployWinform.Models
                 var assembly = info.FirstOrDefault(r => r.Contains("<AssemblyName>") && r.Contains("</AssemblyName>"));
                 if (!string.IsNullOrEmpty(assembly))
                 {
-                    project.OutPutName = assembly.Split(new string[] {"<AssemblyName>"}, StringSplitOptions.None)[1]
-                        .Split(new string[]{ "<" }, StringSplitOptions.RemoveEmptyEntries)[0];
+                    project.OutPutName = assembly.Split(new string[] { "<AssemblyName>" }, StringSplitOptions.None)[1]
+                        .Split(new string[] { "<" }, StringSplitOptions.RemoveEmptyEntries)[0];
                     if (project.IsNetcorePorject)
                     {
                         project.OutPutName += ".dll";
@@ -162,12 +162,12 @@ namespace AntDeployWinform.Models
                         isDockerLine = false;
                         if (line.Contains("Always") || line.Contains("PreserveNewest"))
                         {
-                            setCopy =  true;
+                            setCopy = true;
                             break;
                         }
                     }
                 }
-               
+
                 return setCopy;
             }
             catch (Exception)
@@ -216,20 +216,56 @@ namespace AntDeployWinform.Models
             }
         }
 
-        public static string GetPluginConfigPath(string projectName = null)
+        public static string GetPluginConfigPath(string ProjectFolderPath, string projectName = null)
         {
             try
             {
-                var path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-                var folderName = Path.Combine(path, "AntDeploy");
+                //var path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                var path = AppDomain.CurrentDomain.BaseDirectory;
+                var folderName = Path.Combine(path, "AntDeployConfig");
                 if (!string.IsNullOrEmpty(folderName))
                 {
-                    if (!Directory.Exists(folderName))
+                    //return Path.Combine(folderName, string.IsNullOrEmpty(projectName) ? "AntDeploy.json" : CodingHelper.MD5(projectName) + ".json");
+                    string json = "";
+                    if (String.IsNullOrWhiteSpace(projectName))
                     {
-                        Directory.CreateDirectory(folderName);
+                        if (!Directory.Exists(folderName))
+                        {
+                            Directory.CreateDirectory(folderName);
+                        }
+                        json = Path.Combine(folderName, "GlobalConfig.json");
+                    }
+                    else
+                    {
+                        if (File.Exists(projectName))
+                        {
+                            var file = new FileInfo(projectName);
+                            ProjectFolderPath = file.DirectoryName;
+                        }
+                        string rootPath = Path.GetDirectoryName(ProjectFolderPath.TrimEnd('\\'));
+                        string dirName = ProjectFolderPath.Substring(rootPath.Length).Trim('\\');
+                        //string appDataPath = AppDomain.CurrentDomain.BaseDirectory;
+                        string newDir = Path.Combine(folderName, $"{dirName}_config");
+                        if (!Directory.Exists(newDir))
+                        {
+                            Directory.CreateDirectory(newDir);
+                        }
+                        json = Path.Combine(newDir, "PluginConfig.json");
                     }
 
-                    return Path.Combine(folderName, string.IsNullOrEmpty(projectName) ? "AntDeploy.json" : CodingHelper.MD5(projectName) + ".json");
+                    //复制旧配置文件
+                    if (!File.Exists(json))
+                    {
+                        var tempPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                        var tempFolderName = Path.Combine(tempPath, "AntDeploy");
+                        var tempFile = Path.Combine(tempFolderName, string.IsNullOrEmpty(projectName) ? "AntDeploy.json" : CodingHelper.MD5(projectName) + ".json");
+                        if (File.Exists(tempFile))
+                        {
+                            File.Copy(tempFile, json);
+                        }
+                    }
+
+                    return json;
                 }
                 return string.Empty;
             }

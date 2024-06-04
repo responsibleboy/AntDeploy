@@ -11,7 +11,7 @@ namespace AntDeployWinform.Models
         public bool UseAsiaShanghai { get; set; }
         public bool SaveLogs { get; set; }
         public bool MultiInstance { get; set; }
-        public List<string> ProjectPathList  { get; set; }
+        public List<string> ProjectPathList { get; set; }
     }
 
     /// <summary>
@@ -38,6 +38,10 @@ namespace AntDeployWinform.Models
         /// 使用app_offline.htm
         /// </summary>
         public bool IISEnableUseOfflineHtm { get; set; }
+        /// <summary>
+        /// 是否备份程序
+        /// </summary>
+        public bool IISEnableBackup { get; set; }
         /// <summary>
         /// 是否将js或css文件夹重命名
         /// </summary>
@@ -66,8 +70,17 @@ namespace AntDeployWinform.Models
         public bool WindowsServiceEnableIncrement { get; set; }
         public bool LinuxServiceEnableIncrement { get; set; }
         public bool WindowsServiceEnableSelectDeploy { get; set; }
+        /// <summary>
+        /// 是否备份程序
+        /// </summary>
+        public bool WindowsServiceEnableBackup { get; set; }
+
         public bool LinuxServiceEnableSelectDeploy { get; set; }
         public bool LinuxServiceNotifySystemd { get; set; }
+        /// <summary>
+        /// 是否备份程序
+        /// </summary>
+        public bool LinuxServiceEnableBackup { get; set; }
 
         public bool DockerEnableIncrement { get; set; }
         public bool DockerEnableSudo { get; set; }
@@ -108,7 +121,7 @@ namespace AntDeployWinform.Models
         }
     }
 
-    public delegate void EnvChange(Env env, bool isServerChange,bool isRemove);
+    public delegate void EnvChange(Env env, bool isServerChange, bool isRemove);
     public class DeployConfig
     {
         public event EnvChange EnvChangeEvent;
@@ -117,7 +130,7 @@ namespace AntDeployWinform.Models
         public void AddEnv(Env env)
         {
             this.Env.Add(env);
-            EnvChangeEvent?.Invoke(env, false,false);
+            EnvChangeEvent?.Invoke(env, false, false);
         }
 
         public void RemoveEnv(int index)
@@ -128,12 +141,12 @@ namespace AntDeployWinform.Models
             }
             var env = this.Env[index];
             this.Env.RemoveAt(index);
-            EnvChangeEvent?.Invoke(env, false,true);
+            EnvChangeEvent?.Invoke(env, false, true);
         }
 
         public void EnvServerChange(Env env)
         {
-            EnvChangeEvent?.Invoke(env, true,false);
+            EnvChangeEvent?.Invoke(env, true, false);
         }
 
 
@@ -191,7 +204,7 @@ namespace AntDeployWinform.Models
         public ImageCredential TargetImageCredential { get; set; }
 
         public string ImageFormat { get; set; }
-      
+
         public string[] Entrypoint { get; set; }
         public string[] Cmd { get; set; }
         public List<string> IgnoreList { get; set; }

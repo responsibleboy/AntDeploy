@@ -38,7 +38,7 @@ namespace AntDeployAgent.MyApp.Service.Impl
         public override string ProviderName => "windowService";
         public override string ProjectName => _serviceName;
         public override string ProjectPublishFolder => _projectPublishFolder;
-
+        private bool _isBackup = true; //是否需要备份
 
 
         public override string DeployExcutor(FormHandler.FormItem fileItem)
@@ -49,7 +49,7 @@ namespace AntDeployAgent.MyApp.Service.Impl
             EnsureProjectFolder(projectPath);
             EnsureProjectFolder(_projectPublishFolder);
             var deployFolder = string.Empty;
-            try 
+            try
             {
                 var _zipFile = Path.Combine(_projectPublishFolder, fileItem.FileName);
                 using (var fs = new FileStream(_zipFile, FileMode.Create, FileAccess.Write))
@@ -98,6 +98,7 @@ namespace AntDeployAgent.MyApp.Service.Impl
                 if (service.Item1 == null)
                 {
                     Log($"windowService : {_serviceName} not found,start to create!");
+                    return $"windowService : {_serviceName} not found!";
 
                     //创建发布目录
                     var firstDeployFolder = string.IsNullOrEmpty(_physicalPath) ? Path.Combine(projectPath, "deploy") : _physicalPath;
@@ -225,7 +226,7 @@ namespace AntDeployAgent.MyApp.Service.Impl
                     DeployFolder = deployFolder,
                     WaitForWindowsServiceStopTimeOut = _waitForServiceStopTimeOut,
                     BackUpIgnoreList = this._backUpIgnoreList,
-                    NoBackup = !Setting.NeedBackUp
+                    NoBackup = !Setting.NeedBackUp || !_isBackup
                 };
 
                 if (_serviceName.ToLower().Equals("antdeployagentwindowsservice"))
@@ -407,6 +408,12 @@ namespace AntDeployAgent.MyApp.Service.Impl
             if (backUpIgnoreList != null && !string.IsNullOrEmpty(backUpIgnoreList.TextValue))
             {
                 this._backUpIgnoreList = backUpIgnoreList.TextValue.Split(new string[] { "@_@" }, StringSplitOptions.None).ToList();
+            }
+
+            var isBackup = formHandler.FormItems.FirstOrDefault(r => r.FieldName.Equals("isBackup"));
+            if (isBackup != null && !string.IsNullOrEmpty(isBackup.TextValue) && isBackup.TextValue.ToLower().Equals("false"))
+            {
+                _isBackup = false;
             }
 
             return string.Empty;

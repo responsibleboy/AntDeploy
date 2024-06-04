@@ -117,10 +117,33 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="checkBox_iis_backup.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="checkBox_iis_backup.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="checkBox_iis_backup.Size" type="System.Drawing.Size, System.Drawing">
+    <value>72, 16</value>
+  </data>
+  <data name="checkBox_iis_backup.Text" xml:space="preserve">
+    <value>备份程序</value>
+  </data>
+  <data name="checkBox_iis_use_offlinehtm.Location" type="System.Drawing.Point, System.Drawing">
+    <value>370, 56</value>
+  </data>
   <data name="checkBox_iis_use_offlinehtm.Text" xml:space="preserve">
     <value>使用app_offline.htm</value>
   </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="checkBox_iis_restart_site.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="checkBox_iis_restart_site.Location" type="System.Drawing.Point, System.Drawing">
+    <value>448, 12</value>
+  </data>
   <data name="checkBox_iis_restart_site.Size" type="System.Drawing.Size, System.Drawing">
     <value>84, 16</value>
   </data>
@@ -142,6 +165,9 @@
   <data name="checkBox_select_deploy_iis.Text" xml:space="preserve">
     <value>选择指定文件发布</value>
   </data>
+  <data name="checkBox_Increment_iis.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
   <data name="b_iis_deploy.Location" type="System.Drawing.Point, System.Drawing">
     <value>509, 107</value>
   </data>
@@ -160,22 +186,14 @@
   <data name="tabPage_iis_log.Size" type="System.Drawing.Size, System.Drawing">
     <value>606, 292</value>
   </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="checkBox_iis_rename_jsname_prefix.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="checkBox_iis_rename_jsname_prefix.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <data name="checkBox_iis_rename_jsname_prefix.Location" type="System.Drawing.Point, System.Drawing">
-    <value>37, 45</value>
-  </data>
   <data name="checkBox_iis_rename_jsname_prefix.Size" type="System.Drawing.Size, System.Drawing">
     <value>276, 16</value>
-  </data>
-  <data name="checkBox_iis_rename_jsname_prefix.TabIndex" type="System.Int32, mscorlib">
-    <value>45</value>
   </data>
   <data name="checkBox_iis_rename_jsname_prefix.Text" xml:space="preserve">
     <value>替换js或css文件名时，是否前边带上斜杠“/”</value>
@@ -301,7 +319,7 @@
     <value>157, 9</value>
   </data>
   <data name="txt_docker_volume.Size" type="System.Drawing.Size, System.Drawing">
-    <value>396, 26</value>
+    <value>396, 28</value>
   </data>
   <data name="label46.Size" type="System.Drawing.Size, System.Drawing">
     <value>455, 12</value>
@@ -314,9 +332,6 @@
   </data>
   <data name="label27.Location" type="System.Drawing.Point, System.Drawing">
     <value>110, 17</value>
-  </data>
-  <data name="label_docker_demo.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 136</value>
   </data>
   <data name="progress_docker_tip.Size" type="System.Drawing.Size, System.Drawing">
     <value>366, 26</value>
@@ -465,6 +480,9 @@
   <data name="btn_dockerImage_ignore_add.Text" xml:space="preserve">
     <value>添加</value>
   </data>
+  <data name="list_dockerImage_ignore.Size" type="System.Drawing.Size, System.Drawing">
+    <value>434, 124</value>
+  </data>
   <data name="groupBox4.Text" xml:space="preserve">
     <value>排除规则【regex】</value>
   </data>
@@ -522,6 +540,18 @@
   <data name="page_docker_img.Text" xml:space="preserve">
     <value>Docker镜像发布</value>
   </data>
+  <data name="checkBox_backup_windows_server.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="checkBox_backup_windows_server.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="checkBox_backup_windows_server.Size" type="System.Drawing.Size, System.Drawing">
+    <value>72, 16</value>
+  </data>
+  <data name="checkBox_backup_windows_server.Text" xml:space="preserve">
+    <value>备份程序</value>
+  </data>
   <data name="btn_windows_serivce_stop.Location" type="System.Drawing.Point, System.Drawing">
     <value>511, 101</value>
   </data>
@@ -531,11 +561,20 @@
   <data name="btn_windows_service_retry.Text" xml:space="preserve">
     <value>重试</value>
   </data>
+  <data name="checkBox_select_deploy_service.Location" type="System.Drawing.Point, System.Drawing">
+    <value>311, 45</value>
+  </data>
   <data name="checkBox_select_deploy_service.Size" type="System.Drawing.Size, System.Drawing">
     <value>120, 16</value>
   </data>
   <data name="checkBox_select_deploy_service.Text" xml:space="preserve">
     <value>选择指定文件发布</value>
+  </data>
+  <data name="checkBox_Increment_window_service.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="checkBox_Increment_window_service.Location" type="System.Drawing.Point, System.Drawing">
+    <value>311, 20</value>
   </data>
   <data name="progress_window_service_tip.Size" type="System.Drawing.Size, System.Drawing">
     <value>398, 31</value>
@@ -560,6 +599,27 @@
   </data>
   <data name="page_window_service.Size" type="System.Drawing.Size, System.Drawing">
     <value>620, 460</value>
+  </data>
+  <data name="checkBox_backup_linux_service.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="checkBox_backup_linux_service.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="checkBox_backup_linux_service.Location" type="System.Drawing.Point, System.Drawing">
+    <value>283, 9</value>
+  </data>
+  <data name="checkBox_backup_linux_service.Size" type="System.Drawing.Size, System.Drawing">
+    <value>72, 16</value>
+  </data>
+  <data name="checkBox_backup_linux_service.TabIndex" type="System.Int32, mscorlib">
+    <value>58</value>
+  </data>
+  <data name="checkBox_backup_linux_service.Text" xml:space="preserve">
+    <value>备份程序</value>
+  </data>
+  <data name="checkBox_select_type_linuxservice.Location" type="System.Drawing.Point, System.Drawing">
+    <value>283, 45</value>
   </data>
   <data name="label49.Location" type="System.Drawing.Point, System.Drawing">
     <value>26, 96</value>
@@ -600,11 +660,20 @@
   <data name="tabControl_linux_service.Size" type="System.Drawing.Size, System.Drawing">
     <value>620, 329</value>
   </data>
+  <data name="checkBox_select_deploy_linuxservice.Location" type="System.Drawing.Point, System.Drawing">
+    <value>283, 27</value>
+  </data>
   <data name="checkBox_select_deploy_linuxservice.Size" type="System.Drawing.Size, System.Drawing">
     <value>120, 16</value>
   </data>
   <data name="checkBox_select_deploy_linuxservice.Text" xml:space="preserve">
     <value>选择指定文件发布</value>
+  </data>
+  <data name="checkBox_Increment_linux_service.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="checkBox_Increment_linux_service.Location" type="System.Drawing.Point, System.Drawing">
+    <value>427, 9</value>
   </data>
   <data name="checkBox_Increment_linux_service.Size" type="System.Drawing.Size, System.Drawing">
     <value>72, 16</value>
@@ -645,8 +714,14 @@
   <data name="page_linux_service.Text" xml:space="preserve">
     <value>Linux服务发布</value>
   </data>
+  <data name="list_backUp_ignore.Size" type="System.Drawing.Size, System.Drawing">
+    <value>152, 148</value>
+  </data>
   <data name="groupBox1.Text" xml:space="preserve">
     <value>Token服务器备份排除规则</value>
+  </data>
+  <data name="list_env_ignore.Size" type="System.Drawing.Size, System.Drawing">
+    <value>157, 148</value>
   </data>
   <data name="btn_win_server_testAll.Text" xml:space="preserve">
     <value>测试连接全部</value>
@@ -674,12 +749,6 @@
   </data>
   <data name="label52.Location" type="System.Drawing.Point, System.Drawing">
     <value>415, 287</value>
-  </data>
-  <data name="chk_global_useCheckBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 16</value>
-  </data>
-  <data name="chk_global_useCheckBox.Text" xml:space="preserve">
-    <value>开启环境下服务器可分组功能</value>
   </data>
   <data name="checkBox_multi_deploy.Location" type="System.Drawing.Point, System.Drawing">
     <value>409, 37</value>
@@ -797,56 +866,6 @@
   </data>
   <data name="cmSysButton1.SysButtonDown" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
-        iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAALGPC/xhBQAAAmNJREFUWEft
-        l8FLFFEcx4eiDhJBBGWFBwusDp76BzxJhxA6CHaQCqRzkKcuLUSBCHXo5EXv3tqDdBAkvUnHOtS4RWs7
-        rpZa21aU1bfvc36yb978ZpydXQmiD3wP4773/X7defPerPefpnmBQ56PfmrYW8Iodcsr4Qqv+2TEHuFj
-        hJqhkKI1apKFLsmsNuBjgP/lrBWSVcXWi/gYdEyb10sUxK1JzETNMI+aLtHO8IYGxX0XzD3XDdqhAUlJ
-        QVlwxTqw+QuZMWPNHNdn2zuV8FGLTHr+XVxzYOa6ftSIpCn4mLYHX1sVpxYwHrYn9VjSFHzU7MGFdXEh
-        T76E11lkY65tT+8V6pLmYLZSGXSwBBx5CzyoiQu5TqOj/Nv+JcdQ0cNNmURiBUIp23a4n+NYGbjwIdTE
-        V3EhG1xYz34Ai9TCN2COnyXJRi1gsmLwUOmqNMLdAnlRC5gDzKW7gqId7hao/w6/AVtP5ZuobMkghYQC
-        oxLb4HgZ99IK3PgU/cyopwrskzWRRMIaGJbYBoffYMgNsAss8Jk2167GWGyKSiKhQL/EWgTo6F2LFrjz
-        WVxaQNkHsP1So3FuFYFdwKj0U5xykLATzkhcnJPLeOQWMJqnUY2LMCuJZ0GolK2YnK3ivVbCVoH3fp5B
-        ti7z9ilhUe16GJGuAHe1UFeTfAx3wm9+VMJ0ZTiOSXeAOS3U1kVut/e5D1zdUIM0ZXwhEbKUOLOiBsWV
-        972wZwXTWrDR6QA4wENLDbSV+6VUOPUOt1kksjBPLCtBcbXhtdyis4zx81Wsd7xWw3a0Bz9MXP7aT7N/
-        E8/7A4JLlr0HD1scAAAAAElFTkSuQmCC
-</value>
-  </data>
-  <data name="cmSysButton1.SysButtonMouse" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAALGPC/xhBQAAAmNJREFUWEft
-        l8FLFFEcx4eiDhJBBGWFBwusDp76BzxJhxA6CHaQCqRzkKcuLUSBCHXo5EXv3tqDdBAkvUnHOtS4RWs7
-        rpZa21aU1bfvc36yb978ZpydXQmiD3wP4773/X7defPerPefpnmBQ56PfmrYW8Iodcsr4Qqv+2TEHuFj
-        hJqhkKI1apKFLsmsNuBjgP/lrBWSVcXWi/gYdEyb10sUxK1JzETNMI+aLtHO8IYGxX0XzD3XDdqhAUlJ
-        QVlwxTqw+QuZMWPNHNdn2zuV8FGLTHr+XVxzYOa6ftSIpCn4mLYHX1sVpxYwHrYn9VjSFHzU7MGFdXEh
-        T76E11lkY65tT+8V6pLmYLZSGXSwBBx5CzyoiQu5TqOj/Nv+JcdQ0cNNmURiBUIp23a4n+NYGbjwIdTE
-        V3EhG1xYz34Ai9TCN2COnyXJRi1gsmLwUOmqNMLdAnlRC5gDzKW7gqId7hao/w6/AVtP5ZuobMkghYQC
-        oxLb4HgZ99IK3PgU/cyopwrskzWRRMIaGJbYBoffYMgNsAss8Jk2167GWGyKSiKhQL/EWgTo6F2LFrjz
-        WVxaQNkHsP1So3FuFYFdwKj0U5xykLATzkhcnJPLeOQWMJqnUY2LMCuJZ0GolK2YnK3ivVbCVoH3fp5B
-        ti7z9ilhUe16GJGuAHe1UFeTfAx3wm9+VMJ0ZTiOSXeAOS3U1kVut/e5D1zdUIM0ZXwhEbKUOLOiBsWV
-        972wZwXTWrDR6QA4wENLDbSV+6VUOPUOt1kksjBPLCtBcbXhtdyis4zx81Wsd7xWw3a0Bz9MXP7aT7N/
-        E8/7A4JLlr0HD1scAAAAAElFTkSuQmCC
-</value>
-  </data>
-  <data name="cmSysButton1.SysButtonNorml" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAALGPC/xhBQAAAvhJREFUWEft
-        l01o1EAYhucgKKJHPelBEEEvCgoqXupFBEURWkRKQWVBPIpWwYs9ePAPPIjiSUFUsOKhHkRQ9CDipRdN
-        U9vtz8rulq67LtvWtrv5mRm/L/liuplJm7QWQXzgZTPZzPt+SWYmCftPWsomW9Mw2AHbYB2OwS7A9nmr
-        j52oG6yFDlke7D6WcfrYK/iVsTJYGfTA/coOU7el0zDZEcdkb7WB8wiKfbnkQux+dlZnnkoGu0926YCz
-        fqM1XITwapBtMqDDbZ3RXDlDW6VbPOkJt3XHNMlkZ8h+fvCeaw1Q5krJq/eksHMyCu7j1Tv6fiT0pph4
-        4gacWzguJZ+kuHiEnYcrsk3pj0JvitEDB2WinVDOyG6yT45trlJ8SBmKU4F7/0LpYK6Q0imRbXLwVile
-        IFxLKK4Z2ctW6zrwH7fIMj1usUPxQ+FqSrEh3vJKBzj9a6Wb3SJ5bj+c/TjZpYdPdivhKMyi2BBc2/FP
-        d3iHlOPnfJUukhXx8zVt+IjZXk8B3kyoPaQWtgvaAjCLYkPwwcJzLWE4qnKDrIDpd7Tvut+uf/HNBtbB
-        qU57u4LRz2uPvDbiZDc3h4Mwi2JD3NzBnqbwuWEInj3uq97129aQdAY3eIYBvwsIjgGc7KamcBQ+QSk2
-        hI/suqIUEL0FECqFRQ0AZgde5gBhF6Wof4YrMkvtnBKOwsc3xYZYAxuPKgWgljIIJ55oC4h9dxDFU65S
-        wMwHskuPO3ZaV0CV4lRE/tigUgCKT5FlcvhUjy4cZ8BjilPho3s7tQVMPCfb5GjDQQu+pIh865hSQO0p
-        TMNP4LrweODlLm0wKtF7AawF6myYeAYFfPTVyMLA/A5JMxTpLzi46rmFdm1woMSvaOLbofdNBZSv+kXg
-        AlO5BtOz09svSpdiH71RWSZrI/tkKEVo5A5v14ZFZRmsi2zTIQqt3bpgFB/dow2LatHhAXx032WRb6uk
-        DccB90e/D5zhnTdFob3qDKzXBnpajg+TKH/t0+wfhbFf3UKpu0QJvF0AAAAASUVORK5CYII=
-</value>
-  </data>
-  <data name="cmSysButton2.SysButtonDown" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
         iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAALGPC/xhBQAAAU9JREFUWEft
         lT1LA0EYhC8QsAl2KdMJYqMIYpHKKqWgCCKijSASsFJBJIQgWhhIlRSKneD/dGbZWfbwIHfHviHFPfCw
         7HsfM5BjkzWsC9fwt6QLeAWT8QCLgpZ5CpOgF+6U9Any/neYhLhAGQ6hnklC1QJEz9SRP3kOXahS4BXG
@@ -856,7 +875,7 @@
         U6qsbRj4gLqwCkcwB5txWHRzannOMK9hXciyP1E8vUTpwLgHAAAAAElFTkSuQmCC
 </value>
   </data>
-  <data name="cmSysButton2.SysButtonMouse" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+  <data name="cmSysButton1.SysButtonMouse" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAALGPC/xhBQAAAb1JREFUWEft
         l7FLAzEUxg9XZxERlCang4iD4CIIOri56ODg5OLi4h/g0slBHAVxtc1duVHQUQcd3FwcnOxQhy6CeNfY
@@ -869,7 +888,7 @@
         qM7Ycz91iOhbv/V/YkB/eN4Hg/I2q+cVEiUAAAAASUVORK5CYII=
 </value>
   </data>
-  <data name="cmSysButton2.SysButtonNorml" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+  <data name="cmSysButton1.SysButtonNorml" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAACkAAAAgCAYAAACPb1E+AAAABGdBTUEAALGPC/xhBQAAAkVJREFUWEfN
         mN1LU3EYx39d1DlrZURCF70gBCraRURCeBF6F5ntLPCm/0AQvAhCQaYud7aLYBJErRcGVsLW2ui2G2+E

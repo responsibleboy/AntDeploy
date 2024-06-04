@@ -30,6 +30,7 @@ namespace AntDeployAgent.MyApp.Service.Impl
         private bool _useOfflineHtm = false; //指定用offline.htm
         private bool _useTempPhysicalPath = false; //是否采用新的模式
         private bool _poolAlwaysRunning = false; //新建site的时候支持让Pool一直running的配置
+        private bool _isBackup = true; //是否需要备份
 
         public override string ProviderName => "iis";
         public override string ProjectName => _projectName;
@@ -277,7 +278,7 @@ namespace AntDeployAgent.MyApp.Service.Impl
                     DeployFolder = deployFolder,
                     SiteName = projectLocation.Item2,
                     BackUpIgnoreList = this._backUpIgnoreList,
-                    NoBackup = !Setting.NeedBackUp
+                    NoBackup = !Setting.NeedBackUp || !_isBackup
                 };
 
                 //是否采用 每次都更换新的物理路径的方式
@@ -440,6 +441,12 @@ namespace AntDeployAgent.MyApp.Service.Impl
             if (useOfflineHtm != null && !string.IsNullOrEmpty(useOfflineHtm.TextValue) && useOfflineHtm.TextValue.ToLower().Equals("true"))
             {
                 _useOfflineHtm = true;
+            }
+
+            var isBackup = formHandler.FormItems.FirstOrDefault(r => r.FieldName.Equals("isBackup"));
+            if (isBackup != null && !string.IsNullOrEmpty(isBackup.TextValue) && isBackup.TextValue.ToLower().Equals("false"))
+            {
+                _isBackup = false;
             }
 
             var poolAlwaysRunning = formHandler.FormItems.FirstOrDefault(r => r.FieldName.Equals("poolAlwaysRunning"));

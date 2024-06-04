@@ -28,6 +28,8 @@ namespace AntDeployAgent.MyApp.Service.Impl
         private string _dateTimeFolderName; //版本
         private bool _isIncrement; //是否增量
         private string _physicalPath; //指定的创建的时候用的服务器路径
+        private bool _isBackup = true; //是否需要备份
+
         public override string ProviderName => "linux";
         public override string ProjectName => _serviceName;
         public override string ProjectPublishFolder => _projectPublishFolder;
@@ -98,6 +100,7 @@ namespace AntDeployAgent.MyApp.Service.Impl
                 if (string.IsNullOrEmpty(service.Item2)) //没有找到该服务的workingFolder 可能是service描述文件内容不对，可能是服务不存在
                 {
                     Log($"systemctlService : {_serviceName} not found,start to create!");
+                    return $"systemctlService : {_serviceName} not found!";
 
                     //创建发布目录
                     var firstDeployFolder = string.IsNullOrEmpty(_physicalPath) ? Path.Combine(projectPath, "deploy") : _physicalPath;
@@ -217,7 +220,7 @@ namespace AntDeployAgent.MyApp.Service.Impl
                     ApplicationPoolName = fullExcutePath,
                     BackUpIgnoreList = this._backUpIgnoreList,
                     UseOfflineHtm = string.IsNullOrEmpty(_serviceStartType) || _serviceStartType.Equals("Auto"),
-                    NoBackup = !Setting.NeedBackUp,
+                    NoBackup = !Setting.NeedBackUp || !_isBackup,
                     Site1 = _env
                 };
 
@@ -389,6 +392,12 @@ namespace AntDeployAgent.MyApp.Service.Impl
             if (backUpIgnoreList != null && !string.IsNullOrEmpty(backUpIgnoreList.TextValue))
             {
                 this._backUpIgnoreList = backUpIgnoreList.TextValue.Split(new string[] { "@_@" }, StringSplitOptions.None).ToList();
+            }
+
+            var isBackup = formHandler.FormItems.FirstOrDefault(r => r.FieldName.Equals("isBackup"));
+            if (isBackup != null && !string.IsNullOrEmpty(isBackup.TextValue) && isBackup.TextValue.ToLower().Equals("false"))
+            {
+                _isBackup = false;
             }
 
             return string.Empty;
