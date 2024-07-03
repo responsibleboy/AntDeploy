@@ -178,7 +178,9 @@
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
       <CustomToolNamespace>AntDeployWinform</CustomToolNamespace>
     </EmbeddedResource>
-    <EmbeddedResource Include="Models\resx\Strings.zh.resx" />
+    <EmbeddedResource Include="Models\resx\Strings.zh.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
